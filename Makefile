@@ -8,7 +8,7 @@ CFLAGS := -O2
 
 all: hello.hex
 
-hello: hello.o entry.o
+hello: hello.o entry.o crt0.o
 	$(LD) $^ -o $@
 	
 hello.hex: hello

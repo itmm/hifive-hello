@@ -10,27 +10,16 @@ static inline void my_putc(char c) {
 	    *port = c;
 }
 
-static inline void my_msg() {
-	my_putc('H');
-	my_putc('e');
-	my_putc('l');
-	my_putc('l');
-	my_putc('o');
-	my_putc(' ');
-	my_putc('W');
-	my_putc('o');
-	my_putc('r');
-	my_putc('l');
-	my_putc('d');
-	my_putc('!');
-	my_putc('\r');
-	my_putc('\n');
+static inline void my_puts(const char *s) {
+	for (; *s; ++s) {
+		my_putc(*s);
+	}
 }
 
-static const char msg[] = "Hello World!";
+static const char msg[] = "Hello World!\r\n";
 
-void _start() {
+void main() {
 	enable_out();
-	my_msg();
+	my_puts(msg);
 	for (;;) {}
 }
