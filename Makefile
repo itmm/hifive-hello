@@ -2,13 +2,13 @@
 
 TARGET := riscv32-unknown-elf
 CC := $(TARGET)-gcc
+CXX := $(TARGET)-g++
 LD := $(TARGET)-ld -T memory.lds
-AS := $(TARGET)-as
-CFLAGS := -O2
+CXXFLAGS := -O2
 
 all: hello.hex
 
-hello: hello.o entry.o crt0.o
+hello: hello.o startup.o
 	$(LD) $^ -o $@
 	
 hello.hex: hello
