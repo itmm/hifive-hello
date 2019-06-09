@@ -1,36 +1,32 @@
 
-.section .init
-.global _enter
-_enter:
+	
+	.section .init
+	.global _enter
+	_enter:
+		
+	.option push
+	.option norelax
+		la gp, __global_pointer$
+	.option pop
 
-.option push
-.option norelax
-	// set global pointer to enable indexed access
-	la gp, __global_pointer$
-.option pop
-
-	// install dummy trap vector
     la t0, early_trap_vector
     csrw mtvec, t0
-	
-	// set stack pointer; make sure that it is on a 16-byte boundary
-	la sp, _stack_end
+
+	la sp, _sp
 	andi sp, sp, -16
-	
-	// only continue on core #0
-	csrr a0, mhartid
-1:
-	bnez a0, 1b
+
+		csrr a0, mhartid
+	1:
+		bnez a0, 1b
 
 	call setup
 	call main
 
-	// spin to death
-1:
-	j 1b
+	1:
+		j 1b
 
-// dummy trap vector
-.align 2
-early_trap_vector:
-    j early_trap_vector
+
+	.align 2
+	early_trap_vector:
+		j early_trap_vector
 

@@ -1,4 +1,3 @@
 
-#include "iostream.h"
-
-std::ostream std::cout;
+	#define iostream_IMPL 1
+	#include "iostream.h"

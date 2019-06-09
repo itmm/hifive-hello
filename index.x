@@ -1,265 +1,111 @@
-# hello
+# Building my first program for HiFive1 Rev. B
+
+It is a bit difficult to build a project for the HiFive1 board
+(see https://wwww.SiFive.com).
+At least for me.
+I only use Raspberry Pis (see https://www.raspberrypi.com) to do my
+development.
+And the building tools do not support to build on an ARM platform.
+So I have to do it the hard way.
+
+This document describes how to build the tools needed to program the
+HiFive1 from scratch on a Rasperry Pi 3B+.
+
+The goal is to make the following C++ program run on the HiFive1 and
+print the message over the UART.
 
 ```
 @Def(file: hello.cpp)
-#include <iostream>
+	#include <iostream>
 
-int main() {
-	std::cout << "Hello World!\n";
-}
+	int main() {
+		std::cout << "Hello World!\n";
+	}
 @End(file: hello.cpp)
 ```
+* Print a simple message and terminate
+
+You can build the program on the Raspberry Pi with the command
 
 ```
-@Def(file: iostream.h)
-#pragma once
-
-namespace std {
-	class ostream {
-			volatile int *port() {
-				return reinterpret_cast<
-					volatile int *
-				>(0x10013000);
-			}
-			void put(char c) {
-				while (*port() < 0) { }
-				*port() = c;
-			}
-		public:
-			ostream() {
-				static const int tx_control { 0x08 };
-				port()[tx_control] |= 1;
-			}
-
-			ostream &operator<<(const char *s) {
-				if (s) for (; *s; ++s) {
-					if (*s == '\n') {
-						put('\r');
-					}
-					put(*s);
-				}
-				return *this;
-			}
-	};
-
-	extern ostream cout;
-}
-@End(file: iostream.h)
+$ @k(g++) @k(-Wall) @s(hello.cpp) @k(-o) @s(hello)
 ```
+* Build the program locally
+
+If the commando is not working maybe you need to install the C++
+compiler with
 
 ```
-@Def(file: iostream)
-#include "iostream.h"
-@End(file: iostream)
+$ @k(sudo) @k(apt) @k(intall) @s(g++)
 ```
+* Install the GCC C++ compiler for Rasperry Pi
 
-```
-@Def(file: iostream.cpp)
-#include "iostream.h"
+But that is not working for the HiFive1.
+The HiFive1 is running a RISC-V processor (see https://www.riscv.org).
 
-std::ostream std::cout;
-@End(file: iostream.cpp)
-```
+So I need a C++ compiler that writes RISC-V assembly.
+But not only that: the Metal Framework used by SiFive to build examples
+for the HiFive1 needs special extensions of the RISC-V instruction set
+to compile.
+And the toolset to build this augmented compiler is only available for
+Windows, macOS and Intel-Linux.
+And it only builds on these platforms.
 
-```
-@Def(file: init.S)
-.section .init
-.global _enter
-_enter:
+But the official RISC-V compiler from the RISC-V Foundation can also be
+build on the Rasperry Pi.
+And instead of using a multilayered framework I extracted the relevant
+information to build my example program.
 
-.option push
-.option norelax
-	// set global pointer to enable indexed access
-	la gp, __global_pointer$
-.option pop
-
-	// install dummy trap vector
-    la t0, early_trap_vector
-    csrw mtvec, t0
-	
-	// set stack pointer; make sure that it is on a 16-byte boundary
-	la sp, _stack_end
-	andi sp, sp, -16
-	
-	// only continue on core #0
-	csrr a0, mhartid
-1:
-	bnez a0, 1b
-
-	call setup
-	call main
-
-	// spin to death
-1:
-	j 1b
-
-// dummy trap vector
-.align 2
-early_trap_vector:
-    j early_trap_vector
-
-@End(file: init.S)
-```
+So here are the next steps:
 
 ```
-@Def(file: setup.cpp)
-extern "C" int *_bss_begin __attribute__((weak));
-extern "C" int *_bss_end __attribute__((weak));
-
-static inline void clear_bss() {
-	auto cur = _bss_begin;
-	while (cur < _bss_end) {
-		*cur++ = 0;
-	}
-}
-
-extern "C" void (**_init_array_begin)() __attribute__((weak));
-extern "C" void (**_init_array_end)() __attribute__((weak));
-
-static inline void construct_globals() {
-	auto cur = _init_array_begin;
-	while (cur < _init_array_end) {
-		(*(*cur++))();
-	}
-}
-
-extern "C" void setup() {
-	clear_bss();
-	construct_globals();
-}
-@End(file: setup.cpp)
+@inc(toolset.x)
 ```
+* Build the GCC C++ Compiler for HiFive1
 
 ```
-@Def(file: memory.lds)
-OUTPUT_ARCH("riscv")
-
-ENTRY(_enter)
-
-MEMORY
-{
-	ram (wxa!ri) : ORIGIN = 0x80000000, LENGTH = 0x4000
-	flash (rxai!w) : ORIGIN = 0x20010000, LENGTH = 0x6a120
-}
-
-PHDRS
-{
-	flash PT_LOAD;
-	ram PT_NULL;
-}
-
-SECTIONS
-{
-	__stack_size = DEFINED(__stack_size) ? __stack_size : 0x400;
-	__heap_size = DEFINED(__heap_size) ? __heap_size : 0x400;
-
-	.init 		:
-	{
-		*(.init)
-	} >flash AT>flash :flash
-
-	.init_array : {
-		PROVIDE ( _init_array_begin = . );
-		KEEP(*(SORT_BY_INIT_PRIORITY(.init_array.*)));
-		PROVIDE ( _init_array_end = . );
-	} >flash AT>flash :flash
-
-	. = ALIGN(8);
-	.text 		:
-	{
-		*(.text .text*)
-	} >flash AT>flash :flash
-
-
-	.rodata :
-	{
-		*(.rodata)
-		*(.sdata)
-	} >flash AT>flash :flash
-	
-	.data 		:
-	{
-		*(.data)
-		PROVIDE( __global_pointer$ = . + 0x800 );
-	} >ram AT>ram :ram
-
-	PROVIDE(_bss_begin = . );
-	.bss 		:
-	{
-		*(.bss)
-	} >ram AT>ram :ram
-	PROVIDE(_bss_end = . );
-
-
-	.stack :
-	{
-		PROVIDE(_stack_begin = .);
-		. = __stack_size;
-		PROVIDE( _sp = . );
-		PROVIDE(_stack_end = .);
-	} >ram AT>ram :ram
-
-
-	.heap :
-	{
-		PROVIDE(_heap_begin = . );
-		. = __heap_size;
-		. = __heap_size == 0 ? 0 : ORIGIN(ram) + LENGTH(ram);
-		PROVIDE( _heap_end = . );
-	} >ram AT>ram :ram
-}
-
-@End(file: memory.lds)
+@inc(iostream.x)
 ```
+* Write a minimal implementation of `std::cout` that writes a C-style
+  string to the UART
 
 ```
-@Def(file: Makefile)
-.PHONY: all clean
-
-HXs := $(wildcard *.x)
-SRCs := $(shell hx-files.sh $(HXs))
-OBJs := $(filter %.o, $(SRCs:.S=.o) $(SRCs:.cpp=.o))
-
-all: hello.hex
-
-hx-run: $(HXs)
-	hx
-	touch $@
-
-TARGET := riscv32-unknown-elf
-CC := $(TARGET)-gcc
-CXX := $(TARGET)-g++
-LD := $(TARGET)-ld -T memory.lds
-CXXFLAGS += -MD -O2 -I.
-CFLAGS += -MD
-
-$(OBJs): hx-run
-
-hello: $(OBJs)
-	$(LD) $^ -o $@
-	
-hello.hex: hello
-	$(TARGET)-objcopy $^ -O ihex $@
-
-clean:
-	rm -f $(OBJs) hello hello hello.hex hx-run
-
-hxs:
-	@echo ${HXs}
-
-srcs:
-	@echo ${SRCs}
-
-objs:
-	@echo ${OBJs}
-
-iostream: iostream.h
-	@echo
-
-DEPs := $(wildcard *.d)
-ifneq ($(DEPs),)
-  include $(DEPs)
-endif
-@End(file: Makefile)
+@inc(setup.x)
 ```
+* Write Startup-Code (in RISC-V assembly and C++) to make the processor
+  ready for calling `main`
+
+```
+@inc(deploy.x)
+```
+* Put the resulting program on the HiFive1 and watch the result
+
+I hope that this story will motivate you to also try to develop for a
+RISC-V board.
+It is a cool processor that is not complicated by all the heritage of
+ARM and Intel designs.
+
+Hopefully we can use it in the future not only on boards for embedded
+devices but as a replacement for the ARM in Raspberry Pis or similar
+boards.
+I love to invest my programming time on open technology and not depend on
+companies that can crash whole companies on the tweets of totalitarian
+presidents.
+
+## About this document
+
+This document was created with `hx` (see https://github.com/itmm/hex).
+It consists of `.x`-files that can be converted into a HTML presentation.
+Also it contains code fragments that are part of the presentation.
+
+The code fragments will also be processed by `hx` with a simple macro
+language to generate the source code that is needed by this project.
+The generated source code is part of this repository, but only intended
+for the compiler.
+
+The human users should use the HTML documentation instead.
+So don't argue about the indentation levels and long functions of the
+generated code.
+Only if it is clumpsy, not readable or wrong in the HTML presentation I
+am willing to change the representation.
 

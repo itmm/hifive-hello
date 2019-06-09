@@ -2,286 +2,123 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<title>hello</title>
+<title>Building my first program for HiFive1 Rev. B</title>
 <link rel="stylesheet" type="text/css" href="slides/slides.css"></head>
 <body>
-<h1>hello</h1>
+<h1>Building my first program for HiFive1 Rev. B</h1>
 <div class="slides">
 <div>
 <div>
-<h1>hello</h1>
+<h1>Building my first program for HiFive1 Rev. B</h1>
 </div>
 </div>
+</div>
+<p>It is a bit difficult to build a project for the HiFive1 board (see https://wwww.SiFive.com). At least for me. I only use Raspberry Pis (see https://www.raspberrypi.com) to do my development. And the building tools do not support to build on an ARM platform. So I have to do it the hard way.
+</p>
+<p>This document describes how to build the tools needed to program the HiFive1 from scratch on a Rasperry Pi 3B+.
+</p>
+<p>The goal is to make the following C++ program run on the HiFive1 and print the message over the UART.
+</p>
+<div class="slides">
 <div><div>
 <code>
 <span class="macro">@Def(<span class="name">file: hello.cpp</span>)</span><br/>
-<span class="keyword">#include</span> &lt;<span class="var">iostream</span>&gt;<br/>
+<span class="in1"></span><span class="keyword">#include</span> &lt;<span class="var">iostream</span>&gt;<br/>
 <br/>
-<span class="type">int</span> <span class="fn">main</span>() {<br/>
-<span class="in1"></span><span class="type">std</span>::<span class="var">cout</span> &lt;&lt; <span class="str">"Hello World!\n"</span>;<br/>
-}<br/>
+<span class="in1"></span><span class="type">int</span> <span class="fn">main</span>() {<br/>
+<span class="in2"></span><span class="type">std</span>::<span class="var">cout</span> &lt;&lt; <span class="str">"Hello World!\n"</span>;<br/>
+<span class="in1"></span>}<br/>
 <span class="macro">@End(<span class="name">file: hello.cpp</span>)</span><br/>
 </code></div>
+<ul><li>
+Print a simple message and terminate
+</li></ul>
+</div>
+</div>
+<p>You can build the program on the Raspberry Pi with the command
+</p>
+<div class="slides">
+<div><div>
+<code>
+<span class="var">$</span> <span class="keyword">g++</span> <span class="keyword">-Wall</span> <span class="str">hello.cpp</span> <span class="keyword">-o</span> <span class="str">hello</span><br/>
+</code></div>
+<ul><li>
+Build the program locally
+</li></ul>
+</div>
+</div>
+<p>If the commando is not working maybe you need to install the C++ compiler with
+</p>
+<div class="slides">
+<div><div>
+<code>
+<span class="var">$</span> <span class="keyword">sudo</span> <span class="keyword">apt</span> <span class="keyword">intall</span> <span class="str">g++</span><br/>
+</code></div>
+<ul><li>
+Install the GCC C++ compiler for Rasperry Pi
+</li></ul>
+</div>
+</div>
+<p>But that is not working for the HiFive1. The HiFive1 is running a RISC-V processor (see https://www.riscv.org).
+</p>
+<p>So I need a C++ compiler that writes RISC-V assembly. But not only that: the Metal Framework used by SiFive to build examples for the HiFive1 needs special extensions of the RISC-V instruction set to compile. And the toolset to build this augmented compiler is only available for Windows, macOS and Intel-Linux. And it only builds on these platforms.
+</p>
+<p>But the official RISC-V compiler from the RISC-V Foundation can also be build on the Rasperry Pi. And instead of using a multilayered framework I extracted the relevant information to build my example program.
+</p>
+<p>So here are the next steps:
+</p>
+<div class="slides">
+<div><div>
+<code>
+<span class="macro">@inc(<span class="name"><a href="toolset.html">toolset.x</a></span>)</span><br/>
+</code></div>
+<ul><li>
+Build the GCC C++ Compiler for HiFive1
+</li></ul>
 </div>
 <div><div>
 <code>
-<span class="macro">@Def(<span class="name">file: iostream.h</span>)</span><br/>
-<span class="keyword">#pragma</span> <span class="var">once</span><br/>
-<br/>
-<span class="var">namespace</span> <span class="type">std</span> {<br/>
-<span class="in1"></span><span class="keyword">class</span> <span class="type">ostream</span> {<br/>
-<span class="in3"></span><span class="var">volatile</span> <span class="type">int</span> *<span class="fn">port</span>() {<br/>
-<span class="in4"></span><span class="keyword">return</span> <span class="var">reinterpret_cast</span>&lt;<br/>
-<span class="in5"></span><span class="var">volatile</span> <span class="type">int</span> *<br/>
-<span class="in4"></span>&gt;(<span class="num">0x10013000</span>);<br/>
-<span class="in3"></span>}<br/>
-<span class="in3"></span><span class="type">void</span> <span class="fn">put</span>(<span class="type">char</span> <span class="var">c</span>) {<br/>
-<span class="in4"></span><span class="keyword">while</span> (*<span class="fn">port</span>() &lt; <span class="num">0</span>) { }<br/>
-<span class="in4"></span>*<span class="fn">port</span>() = <span class="var">c</span>;<br/>
-<span class="in3"></span>}<br/>
-<span class="in2"></span><span class="keyword">public</span>:<br/>
-<span class="in3"></span><span class="fn">ostream</span>() {<br/>
-<span class="in4"></span><span class="keyword">static</span> <span class="type">const</span> <span class="type">int</span> <span class="var">tx_control</span> { <span class="num">0x08</span> };<br/>
-<span class="in4"></span><span class="fn">port</span>()[<span class="var">tx_control</span>] |= <span class="num">1</span>;<br/>
-<span class="in3"></span>}<br/>
-<br/>
-<span class="in3"></span><span class="type">ostream</span> &amp;<span class="var">operator</span>&lt;&lt;(<span class="type">const</span> <span class="type">char</span> *<span class="var">s</span>) {<br/>
-<span class="in4"></span><span class="keyword">if</span> (<span class="var">s</span>) <span class="keyword">for</span> (; *<span class="var">s</span>; ++<span class="var">s</span>) {<br/>
-<span class="in5"></span><span class="keyword">if</span> (*<span class="var">s</span> == <span class="str">'\n'</span>) {<br/>
-<span class="in6"></span><span class="fn">put</span>(<span class="str">'\r'</span>);<br/>
-<span class="in5"></span>}<br/>
-<span class="in5"></span><span class="fn">put</span>(*<span class="var">s</span>);<br/>
-<span class="in4"></span>}<br/>
-<span class="in4"></span><span class="keyword">return</span> *<span class="var">this</span>;<br/>
-<span class="in3"></span>}<br/>
-<span class="in1"></span>};<br/>
-<br/>
-<span class="in1"></span><span class="type">extern</span> <span class="type">ostream</span> <span class="var">cout</span>;<br/>
-}<br/>
-<span class="macro">@End(<span class="name">file: iostream.h</span>)</span><br/>
+<span class="macro">@inc(<span class="name"><a href="iostream.html">iostream.x</a></span>)</span><br/>
 </code></div>
+<ul><li>
+Write a minimal implementation of <code><span class="type">std</span>::<span class="var">cout</span></code> that writes a C-style  string to the UART
+</li></ul>
 </div>
 <div><div>
 <code>
-<span class="macro">@Def(<span class="name">file: iostream</span>)</span><br/>
-<span class="keyword">#include</span> <span class="str">"iostream.h"</span><br/>
-<span class="macro">@End(<span class="name">file: iostream</span>)</span><br/>
+<span class="macro">@inc(<span class="name"><a href="setup.html">setup.x</a></span>)</span><br/>
 </code></div>
+<ul><li>
+Write Startup-Code (in RISC-V assembly and C++) to make the processor  ready for calling <code><span class="var">main</span></code>
+</li></ul>
 </div>
 <div><div>
 <code>
-<span class="macro">@Def(<span class="name">file: iostream.cpp</span>)</span><br/>
-<span class="keyword">#include</span> <span class="str">"iostream.h"</span><br/>
-<br/>
-<span class="type">std</span>::<span class="type">ostream</span> <span class="type">std</span>::<span class="var">cout</span>;<br/>
-<span class="macro">@End(<span class="name">file: iostream.cpp</span>)</span><br/>
+<span class="macro">@inc(<span class="name"><a href="deploy.html">deploy.x</a></span>)</span><br/>
 </code></div>
+<ul><li>
+Put the resulting program on the HiFive1 and watch the result
+</li></ul>
 </div>
-<div><div>
-<code>
-<span class="macro">@Def(<span class="name">file: init.S</span>)</span><br/>
-.<span class="var">section</span> .<span class="var">init</span><br/>
-.<span class="var">global</span> <span class="var">_enter</span><br/>
-<span class="var">_enter</span>:<br/>
-<br/>
-.<span class="var">option</span> <span class="var">push</span><br/>
-.<span class="var">option</span> <span class="var">norelax</span><br/>
-<span class="in1"></span>// <span class="var">set</span> <span class="var">global</span> <span class="var">pointer</span> <span class="var">to</span> <span class="var">enable</span> <span class="var">indexed</span> <span class="var">access</span><br/>
-<span class="in1"></span><span class="var">la</span> <span class="var">gp</span>, <span class="var">__global_pointer$</span><br/>
-.<span class="var">option</span> <span class="var">pop</span><br/>
-<br/>
-<span class="in1"></span>// <span class="var">install</span> <span class="var">dummy</span> <span class="var">trap</span> <span class="type">vector</span><br/>
-    <span class="var">la</span> <span class="var">t0</span>, <span class="var">early_trap_vector</span><br/>
-    <span class="var">csrw</span> <span class="var">mtvec</span>, <span class="var">t0</span><br/>
-<span class="in1"></span><br/>
-<span class="in1"></span>// <span class="var">set</span> <span class="var">stack</span> <span class="var">pointer</span>; <span class="var">make</span> <span class="var">sure</span> <span class="var">that</span> <span class="var">it</span> <span class="var">is</span> <span class="var">on</span> <span class="var">a</span> <span class="num">16</span>-<span class="var">byte</span> <span class="var">boundary</span><br/>
-<span class="in1"></span><span class="var">la</span> <span class="var">sp</span>, <span class="var">_stack_end</span><br/>
-<span class="in1"></span><span class="var">andi</span> <span class="var">sp</span>, <span class="var">sp</span>, -<span class="num">16</span><br/>
-<span class="in1"></span><br/>
-<span class="in1"></span>// <span class="var">only</span> <span class="keyword">continue</span> <span class="var">on</span> <span class="var">core</span> <span class="keyword">#0</span><br/>
-<span class="in1"></span><span class="var">csrr</span> <span class="var">a0</span>, <span class="var">mhartid</span><br/>
-<span class="num">1</span>:<br/>
-<span class="in1"></span><span class="var">bnez</span> <span class="var">a0</span>, <span class="num">1b</span><br/>
-<br/>
-<span class="in1"></span><span class="var">call</span> <span class="var">setup</span><br/>
-<span class="in1"></span><span class="var">call</span> <span class="var">main</span><br/>
-<br/>
-<span class="in1"></span>// <span class="var">spin</span> <span class="var">to</span> <span class="var">death</span><br/>
-<span class="num">1</span>:<br/>
-<span class="in1"></span><span class="var">j</span> <span class="num">1b</span><br/>
-<br/>
-// <span class="var">dummy</span> <span class="var">trap</span> <span class="type">vector</span><br/>
-.<span class="var">align</span> <span class="num">2</span><br/>
-<span class="var">early_trap_vector</span>:<br/>
-    <span class="var">j</span> <span class="var">early_trap_vector</span><br/>
-<br/>
-<span class="macro">@End(<span class="name">file: init.S</span>)</span><br/>
-</code></div>
 </div>
-<div><div>
-<code>
-<span class="macro">@Def(<span class="name">file: setup.cpp</span>)</span><br/>
-<span class="type">extern</span> <span class="str">"C"</span> <span class="type">int</span> *<span class="var">_bss_begin</span> <span class="fn">__attribute__</span>((<span class="var">weak</span>));<br/>
-<span class="type">extern</span> <span class="str">"C"</span> <span class="type">int</span> *<span class="var">_bss_end</span> <span class="fn">__attribute__</span>((<span class="var">weak</span>));<br/>
-<br/>
-<span class="keyword">static</span> <span class="var">inline</span> <span class="type">void</span> <span class="fn">clear_bss</span>() {<br/>
-<span class="in1"></span><span class="type">auto</span> <span class="var">cur</span> = <span class="var">_bss_begin</span>;<br/>
-<span class="in1"></span><span class="keyword">while</span> (<span class="var">cur</span> &lt; <span class="var">_bss_end</span>) {<br/>
-<span class="in2"></span>*<span class="var">cur</span>++ = <span class="num">0</span>;<br/>
-<span class="in1"></span>}<br/>
-}<br/>
-<br/>
-<span class="type">extern</span> <span class="str">"C"</span> <span class="type">void</span> (**<span class="var">_init_array_begin</span>)() <span class="fn">__attribute__</span>((<span class="var">weak</span>));<br/>
-<span class="type">extern</span> <span class="str">"C"</span> <span class="type">void</span> (**<span class="var">_init_array_end</span>)() <span class="fn">__attribute__</span>((<span class="var">weak</span>));<br/>
-<br/>
-<span class="keyword">static</span> <span class="var">inline</span> <span class="type">void</span> <span class="fn">construct_globals</span>() {<br/>
-<span class="in1"></span><span class="type">auto</span> <span class="var">cur</span> = <span class="var">_init_array_begin</span>;<br/>
-<span class="in1"></span><span class="keyword">while</span> (<span class="var">cur</span> &lt; <span class="var">_init_array_end</span>) {<br/>
-<span class="in2"></span>(*(*<span class="var">cur</span>++))();<br/>
-<span class="in1"></span>}<br/>
-}<br/>
-<br/>
-<span class="type">extern</span> <span class="str">"C"</span> <span class="type">void</span> <span class="fn">setup</span>() {<br/>
-<span class="in1"></span><span class="fn">clear_bss</span>();<br/>
-<span class="in1"></span><span class="fn">construct_globals</span>();<br/>
-}<br/>
-<span class="macro">@End(<span class="name">file: setup.cpp</span>)</span><br/>
-</code></div>
+<p>I hope that this story will motivate you to also try to develop for a RISC-V board. It is a cool processor that is not complicated by all the heritage of ARM and Intel designs.
+</p>
+<p>Hopefully we can use it in the future not only on boards for embedded devices but as a replacement for the ARM in Raspberry Pis or similar boards. I love to invest my programming time on open technology and not depend on companies that can crash whole companies on the tweets of totalitarian presidents.
+</p>
 </div>
-<div><div>
-<code>
-<span class="macro">@Def(<span class="name">file: memory.lds</span>)</span><br/>
-<span class="fn">OUTPUT_ARCH</span>(<span class="str">"riscv"</span>)<br/>
-<br/>
-<span class="fn">ENTRY</span>(<span class="var">_enter</span>)<br/>
-<br/>
-<span class="var">MEMORY</span><br/>
-{<br/>
-<span class="in1"></span><span class="var">ram</span> (<span class="var">wxa</span>!<span class="var">ri</span>) : <span class="var">ORIGIN</span> = <span class="num">0x80000000</span>, <span class="var">LENGTH</span> = <span class="num">0x4000</span><br/>
-<span class="in1"></span><span class="var">flash</span> (<span class="var">rxai</span>!<span class="var">w</span>) : <span class="var">ORIGIN</span> = <span class="num">0x20010000</span>, <span class="var">LENGTH</span> = <span class="num">0x6a120</span><br/>
-}<br/>
-<br/>
-<span class="var">PHDRS</span><br/>
-{<br/>
-<span class="in1"></span><span class="var">flash</span> <span class="var">PT_LOAD</span>;<br/>
-<span class="in1"></span><span class="var">ram</span> <span class="var">PT_NULL</span>;<br/>
-}<br/>
-<br/>
-<span class="var">SECTIONS</span><br/>
-{<br/>
-<span class="in1"></span><span class="var">__stack_size</span> = <span class="fn">DEFINED</span>(<span class="var">__stack_size</span>) ? <span class="var">__stack_size</span> : <span class="num">0x400</span>;<br/>
-<span class="in1"></span><span class="var">__heap_size</span> = <span class="fn">DEFINED</span>(<span class="var">__heap_size</span>) ? <span class="var">__heap_size</span> : <span class="num">0x400</span>;<br/>
-<br/>
-<span class="in1"></span>.<span class="var">init</span> 		:<br/>
-<span class="in1"></span>{<br/>
-<span class="in2"></span>*(.<span class="var">init</span>)<br/>
-<span class="in1"></span>} &gt;<span class="var">flash</span> <span class="var">AT</span>&gt;<span class="var">flash</span> :<span class="var">flash</span><br/>
-<br/>
-<span class="in1"></span>.<span class="var">init_array</span> : {<br/>
-<span class="in2"></span><span class="var">PROVIDE</span> ( <span class="var">_init_array_begin</span> = . );<br/>
-<span class="in2"></span><span class="fn">KEEP</span>(*(<span class="fn">SORT_BY_INIT_PRIORITY</span>(.<span class="var">init_array</span>.*)));<br/>
-<span class="in2"></span><span class="var">PROVIDE</span> ( <span class="var">_init_array_end</span> = . );<br/>
-<span class="in1"></span>} &gt;<span class="var">flash</span> <span class="var">AT</span>&gt;<span class="var">flash</span> :<span class="var">flash</span><br/>
-<br/>
-<span class="in1"></span>. = <span class="fn">ALIGN</span>(<span class="num">8</span>);<br/>
-<span class="in1"></span>.<span class="var">text</span> 		:<br/>
-<span class="in1"></span>{<br/>
-<span class="in2"></span>*(.<span class="var">text</span> .<span class="var">text</span>*)<br/>
-<span class="in1"></span>} &gt;<span class="var">flash</span> <span class="var">AT</span>&gt;<span class="var">flash</span> :<span class="var">flash</span><br/>
-<br/>
-<br/>
-<span class="in1"></span>.<span class="var">rodata</span> :<br/>
-<span class="in1"></span>{<br/>
-<span class="in2"></span>*(.<span class="var">rodata</span>)<br/>
-<span class="in2"></span>*(.<span class="var">sdata</span>)<br/>
-<span class="in1"></span>} &gt;<span class="var">flash</span> <span class="var">AT</span>&gt;<span class="var">flash</span> :<span class="var">flash</span><br/>
-<span class="in1"></span><br/>
-<span class="in1"></span>.<span class="var">data</span> 		:<br/>
-<span class="in1"></span>{<br/>
-<span class="in2"></span>*(.<span class="var">data</span>)<br/>
-<span class="in2"></span><span class="fn">PROVIDE</span>( <span class="var">__global_pointer$</span> = . + <span class="num">0x800</span> );<br/>
-<span class="in1"></span>} &gt;<span class="var">ram</span> <span class="var">AT</span>&gt;<span class="var">ram</span> :<span class="var">ram</span><br/>
-<br/>
-<span class="in1"></span><span class="fn">PROVIDE</span>(<span class="var">_bss_begin</span> = . );<br/>
-<span class="in1"></span>.<span class="var">bss</span> 		:<br/>
-<span class="in1"></span>{<br/>
-<span class="in2"></span>*(.<span class="var">bss</span>)<br/>
-<span class="in1"></span>} &gt;<span class="var">ram</span> <span class="var">AT</span>&gt;<span class="var">ram</span> :<span class="var">ram</span><br/>
-<span class="in1"></span><span class="fn">PROVIDE</span>(<span class="var">_bss_end</span> = . );<br/>
-<br/>
-<br/>
-<span class="in1"></span>.<span class="var">stack</span> :<br/>
-<span class="in1"></span>{<br/>
-<span class="in2"></span><span class="fn">PROVIDE</span>(<span class="var">_stack_begin</span> = .);<br/>
-<span class="in2"></span>. = <span class="var">__stack_size</span>;<br/>
-<span class="in2"></span><span class="fn">PROVIDE</span>( <span class="var">_sp</span> = . );<br/>
-<span class="in2"></span><span class="fn">PROVIDE</span>(<span class="var">_stack_end</span> = .);<br/>
-<span class="in1"></span>} &gt;<span class="var">ram</span> <span class="var">AT</span>&gt;<span class="var">ram</span> :<span class="var">ram</span><br/>
-<br/>
-<br/>
-<span class="in1"></span>.<span class="var">heap</span> :<br/>
-<span class="in1"></span>{<br/>
-<span class="in2"></span><span class="fn">PROVIDE</span>(<span class="var">_heap_begin</span> = . );<br/>
-<span class="in2"></span>. = <span class="var">__heap_size</span>;<br/>
-<span class="in2"></span>. = <span class="var">__heap_size</span> == <span class="num">0</span> ? <span class="num">0</span> : <span class="fn">ORIGIN</span>(<span class="var">ram</span>) + <span class="fn">LENGTH</span>(<span class="var">ram</span>);<br/>
-<span class="in2"></span><span class="fn">PROVIDE</span>( <span class="var">_heap_end</span> = . );<br/>
-<span class="in1"></span>} &gt;<span class="var">ram</span> <span class="var">AT</span>&gt;<span class="var">ram</span> :<span class="var">ram</span><br/>
-}<br/>
-<br/>
-<span class="macro">@End(<span class="name">file: memory.lds</span>)</span><br/>
-</code></div>
+<h2>About this document</h2>
+<div class="slides">
+<div>
+<div>
+<h2>About this document</h2>
 </div>
-<div><div>
-<code>
-<span class="macro">@Def(<span class="name">file: Makefile</span>)</span><br/>
-.<span class="var">PHONY</span>: <span class="var">all</span> <span class="var">clean</span><br/>
-<br/>
-<span class="var">HXs</span> := <span class="fn">$</span>(<span class="var">wildcard</span> *.<span class="var">x</span>)<br/>
-<span class="var">SRCs</span> := <span class="fn">$</span>(<span class="var">shell</span> <span class="var">hx</span>-<span class="var">files</span>.<span class="var">sh</span> <span class="fn">$</span>(<span class="var">HXs</span>))<br/>
-<span class="var">OBJs</span> := <span class="fn">$</span>(<span class="var">filter</span> %.<span class="var">o</span>, <span class="fn">$</span>(<span class="var">SRCs</span>:.<span class="var">S</span>=.<span class="var">o</span>) <span class="fn">$</span>(<span class="var">SRCs</span>:.<span class="var">cpp</span>=.<span class="var">o</span>))<br/>
-<br/>
-<span class="var">all</span>: <span class="var">hello</span>.<span class="var">hex</span><br/>
-<br/>
-<span class="var">hx</span>-<span class="var">run</span>: <span class="fn">$</span>(<span class="var">HXs</span>)<br/>
-<span class="in1"></span><span class="var">hx</span><br/>
-<span class="in1"></span><span class="var">touch</span> <span class="var">$</span>@<br/>
-<br/>
-<span class="var">TARGET</span> := <span class="var">riscv32</span>-<span class="var">unknown</span>-<span class="var">elf</span><br/>
-<span class="var">CC</span> := <span class="fn">$</span>(<span class="var">TARGET</span>)-<span class="var">gcc</span><br/>
-<span class="var">CXX</span> := <span class="fn">$</span>(<span class="var">TARGET</span>)-<span class="var">g</span>++<br/>
-<span class="var">LD</span> := <span class="fn">$</span>(<span class="var">TARGET</span>)-<span class="var">ld</span> -<span class="var">T</span> <span class="var">memory</span>.<span class="var">lds</span><br/>
-<span class="var">CXXFLAGS</span> += -<span class="var">MD</span> -<span class="var">O2</span> -<span class="var">I</span>.<br/>
-<span class="var">CFLAGS</span> += -<span class="var">MD</span><br/>
-<br/>
-<span class="fn">$</span>(<span class="var">OBJs</span>): <span class="var">hx</span>-<span class="var">run</span><br/>
-<br/>
-<span class="var">hello</span>: <span class="fn">$</span>(<span class="var">OBJs</span>)<br/>
-<span class="in1"></span><span class="fn">$</span>(<span class="var">LD</span>) <span class="var">$</span>^ -<span class="var">o</span> <span class="var">$</span>@<br/>
-<span class="in1"></span><br/>
-<span class="var">hello</span>.<span class="var">hex</span>: <span class="var">hello</span><br/>
-<span class="in1"></span><span class="fn">$</span>(<span class="var">TARGET</span>)-<span class="var">objcopy</span> <span class="var">$</span>^ -<span class="var">O</span> <span class="var">ihex</span> <span class="var">$</span>@<br/>
-<br/>
-<span class="var">clean</span>:<br/>
-<span class="in1"></span><span class="var">rm</span> -<span class="var">f</span> <span class="fn">$</span>(<span class="var">OBJs</span>) <span class="var">hello</span> <span class="var">hello</span> <span class="var">hello</span>.<span class="var">hex</span> <span class="var">hx</span>-<span class="var">run</span><br/>
-<br/>
-<span class="var">hxs</span>:<br/>
-<span class="in1"></span>@<span class="var">echo</span> <span class="var">$</span>{<span class="var">HXs</span>}<br/>
-<br/>
-<span class="var">srcs</span>:<br/>
-<span class="in1"></span>@<span class="var">echo</span> <span class="var">$</span>{<span class="var">SRCs</span>}<br/>
-<br/>
-<span class="var">objs</span>:<br/>
-<span class="in1"></span>@<span class="var">echo</span> <span class="var">$</span>{<span class="var">OBJs</span>}<br/>
-<br/>
-<span class="var">iostream</span>: <span class="var">iostream</span>.<span class="var">h</span><br/>
-<span class="in1"></span>@<span class="var">echo</span><br/>
-<br/>
-<span class="var">DEPs</span> := <span class="fn">$</span>(<span class="var">wildcard</span> *.<span class="var">d</span>)<br/>
-<span class="var">ifneq</span> (<span class="fn">$</span>(<span class="var">DEPs</span>),)<br/>
-  <span class="var">include</span> <span class="fn">$</span>(<span class="var">DEPs</span>)<br/>
-<span class="var">endif</span><br/>
-<span class="macro">@End(<span class="name">file: Makefile</span>)</span><br/>
-</code></div>
 </div>
+</div>
+<p>This document was created with <code><span class="var">hx</span></code> (see https://github.com/itmm/hex). It consists of <code>.<span class="var">x</span></code>-files that can be converted into a HTML presentation. Also it contains code fragments that are part of the presentation.
+</p>
+<p>The code fragments will also be processed by <code><span class="var">hx</span></code> with a simple macro language to generate the source code that is needed by this project. The generated source code is part of this repository, but only intended for the compiler.
+</p>
+<p>The human users should use the HTML documentation instead. So don't argue about the indentation levels and long functions of the generated code. Only if it is clumpsy, not readable or wrong in the HTML presentation I am willing to change the representation.
+</p>
 </body>
 </html>

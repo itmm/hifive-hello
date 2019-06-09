@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Initialize the Processor</title>
+<link rel="stylesheet" type="text/css" href="slides/slides.css"></head>
+<body>
+<h1>Initialize the Processor</h1>
+<div class="slides">
+<div>
+<div>
+<h1>Initialize the Processor</h1>
+</div>
+<ul><li>
+This section documents the steps that are needed to start executing the  main program
+</li></ul>
+</div>
+</div>
+<h2>Preparing the linker</h2>
+<div class="slides">
+<div>
+<div>
+<h2>Preparing the linker</h2>
+</div>
+</div>
+</div>
+<p>The compiled executables must be put into the right places in the flash memory of the HiFive1. The RAM can be accessed, but no persistent data can be stored there.
+</p>
+<p>A linker definition script defines how the parts are put together into a full image.
+</p>
+<p>I also got the inspiration for this file from the Github project <code><span class="var">sifive</span>/<span class="var">freedom</span>-<span class="var">e</span>-<span class="var">sdk</span></code>. In the folder <code><span class="var">bsp</span>/<span class="var">sifive</span>-<span class="var">hifive1</span>-<span class="var">revb</span></code> there is the file <code><span class="var">metal</span>.<span class="var">ramrodata</span>.<span class="var">lds</span></code> that contains most of the information in this file. But I stripped away all definitions that I do not need (yet).
+</p>
+<div class="slides">
+<div><div>
+<code>
+<span class="macro">@Def(<span class="name">file: memory.lds</span>)</span><br/>
+<span class="in1"></span><span class="macro">@put(<span class="name">lds</span>)</span><br/>
+<span class="macro">@End(<span class="name">file: memory.lds</span>)</span><br/>
+</code></div>
+<ul><li>
+The linker definition script contains multiple sections.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@def(<span class="name">lds</span>)</span><br/>
+<span class="in1"></span><span class="fn">OUTPUT_ARCH</span>(<span class="str">"riscv"</span>)<br/>
+<span class="macro">@end(<span class="name">lds</span>)</span><br/>
+</code></div>
+<ul><li>
+The architecture of the build image is RISC-V
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">lds</span>)</span><br/>
+<span class="in1"></span><span class="fn">ENTRY</span>(<span class="var">_enter</span>)<br/>
+<span class="macro">@end(<span class="name">lds</span>)</span><br/>
+</code></div>
+<ul><li>
+The execution will start at the label <code><span class="var">_enter</span></code>.
+</li><li>
+As the processor is not fully initialized at this step, the <code><span class="var">_enter</span></code>  code must be written in assembly language and initialize at least the  stack and global pointer
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">lds</span>)</span><br/>
+<span class="in1"></span><span class="var">MEMORY</span> {<br/>
+<span class="in2"></span><span class="var">ram</span> (<span class="var">wxa</span>!<span class="var">ri</span>) : <span class="var">ORIGIN</span> = <span class="num">0x80000000</span>, <span class="var">LENGTH</span> = <span class="num">0x4000</span><br/>
+<span class="in2"></span><span class="var">flash</span> (<span class="var">rxai</span>!<span class="var">w</span>) : <span class="var">ORIGIN</span> = <span class="num">0x20010000</span>, <span class="var">LENGTH</span> = <span class="num">0x6a120</span><br/>
+<span class="in1"></span>}<br/>
+<span class="macro">@end(<span class="name">lds</span>)</span><br/>
+</code></div>
+<ul><li>
+This is the main information about the memory layout.
+</li><li>
+The flash starts at <code><span class="num">0x20010000</span></code> and that is where the processor will  start executing when it falls out of the boot loader.
+</li><li>
+Also the RAM is present.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">lds</span>)</span><br/>
+<span class="in1"></span><span class="var">PHDRS</span> {<br/>
+<span class="in2"></span><span class="var">flash</span> <span class="var">PT_LOAD</span>;<br/>
+<span class="in2"></span><span class="var">ram</span> <span class="var">PT_NULL</span>;<br/>
+<span class="in1"></span>}<br/>
+<span class="macro">@end(<span class="name">lds</span>)</span><br/>
+</code></div>
+<ul><li>
+I am not sure, what these entries do.
+</li><li>
+TODO: read some docs.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">lds</span>)</span><br/>
+<span class="in1"></span><span class="var">SECTIONS</span> {<br/>
+<span class="in2"></span><span class="macro">@put(<span class="name">sections</span>)</span><br/>
+<span class="in1"></span>}<br/>
+<span class="macro">@end(<span class="name">lds</span>)</span><br/>
+</code></div>
+<ul><li>
+The main part of the lds file describes the sections that will be put  in the ELF output.
+</li><li>
+Each section has an origin, a size and may contain data (both  executable code or static data).
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@def(<span class="name">sections</span>)</span><br/>
+<span class="in1"></span>.<span class="var">init</span> : {<br/>
+<span class="in2"></span>*(.<span class="var">init</span>)<br/>
+<span class="in1"></span>} &gt;<span class="var">flash</span> <span class="var">AT</span>&gt;<span class="var">flash</span> :<span class="var">flash</span><br/>
+<span class="macro">@end(<span class="name">sections</span>)</span><br/>
+</code></div>
+<ul><li>
+The first section (starting at the flash start) contains the setup  code.
+</li><li>
+This is only a small assembly program the sets up the hardware and  calls a C++ function for doing the main initialization.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">sections</span>)</span><br/>
+<span class="in1"></span>.<span class="var">init_array</span> : {<br/>
+<span class="in2"></span><span class="fn">PROVIDE</span>(<span class="var">_init_array_begin</span> = .);<br/>
+<span class="in2"></span><span class="fn">KEEP</span>(*(<span class="fn">SORT_BY_INIT_PRIORITY</span>(.<span class="var">init_array</span>.*)));<br/>
+<span class="in2"></span><span class="fn">PROVIDE</span>(<span class="var">_init_array_end</span> = .);<br/>
+<span class="in1"></span>} &gt;<span class="var">flash</span> <span class="var">AT</span>&gt;<span class="var">flash</span> :<span class="var">flash</span><br/>
+<span class="macro">@end(<span class="name">sections</span>)</span><br/>
+</code></div>
+<ul><li>
+This section is special.
+</li><li>
+It contains a list of functions that all must be called before the  <code><span class="var">main</span></code> program runs.
+</li><li>
+It contains the constructors of global variables that need to be  invoked.
+</li><li>
+Even our smallest program contains one of these constructors:  <code><span class="type">std</span>::<span class="var">cout</span></code> initializes the UART.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">sections</span>)</span><br/>
+<span class="in1"></span>. = <span class="fn">ALIGN</span>(<span class="num">8</span>);<br/>
+<span class="in1"></span>.<span class="var">text</span> : {<br/>
+<span class="in2"></span>*(.<span class="var">text</span> .<span class="var">text</span>*)<br/>
+<span class="in1"></span>} &gt;<span class="var">flash</span> <span class="var">AT</span>&gt;<span class="var">flash</span> :<span class="var">flash</span><br/>
+<span class="macro">@end(<span class="name">sections</span>)</span><br/>
+</code></div>
+<ul><li>
+The <code>.<span class="var">text</span></code> section contains all the code of the <code><span class="var">main</span></code> program.
+</li><li>
+I am not sure, if the alignment is necessary.
+</li><li>
+TODO: check alignment
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">sections</span>)</span><br/>
+<span class="in1"></span>.<span class="var">rodata</span> : {<br/>
+<span class="in2"></span>*(.<span class="var">rodata</span>)<br/>
+<span class="in2"></span>*(.<span class="var">sdata</span>)<br/>
+<span class="in1"></span>} &gt;<span class="var">flash</span> <span class="var">AT</span>&gt;<span class="var">flash</span> :<span class="var">flash</span><br/>
+<span class="macro">@end(<span class="name">sections</span>)</span><br/>
+</code></div>
+<ul><li>
+Readonly data and strings are put directly in the flash.
+</li><li>
+So they cannot be modified directly by the running program.
+</li><li>
+The Freedom Metal framework copies everything into RAM on startup.
+</li><li>
+But I prefer to have more RAM available.
+</li><li>
+It is no problem to byte-address the data in the flash.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">sections</span>)</span><br/>
+<span class="in1"></span>.<span class="var">bss</span> : {<br/>
+<span class="in2"></span>*(.<span class="var">data</span>)<br/>
+<span class="in2"></span><span class="fn">PROVIDE</span>(<span class="var">__global_pointer$</span> = . + <span class="num">0x800</span>);<br/>
+<span class="in2"></span>*(.<span class="var">bss</span>)<br/>
+<span class="in1"></span>} &gt;<span class="var">ram</span> <span class="var">AT</span>&gt;<span class="var">ram</span> :<span class="var">ram</span><br/>
+<span class="macro">@end(<span class="name">sections</span>)</span><br/>
+</code></div>
+<ul><li>
+There is no way to have modifiable data directly in the RAM.
+</li><li>
+All you can do is put some read-only data in the flash and copy it  to the RAM.
+</li><li>
+This will not be done automatically.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">sections</span>)</span><br/>
+<span class="in1"></span>.<span class="var">stack</span> : {<br/>
+<span class="in2"></span>. = . + <span class="num">0x400</span>;<br/>
+<span class="in2"></span><span class="fn">PROVIDE</span>(<span class="var">_sp</span> = .);<br/>
+<span class="in1"></span>} &gt;<span class="var">ram</span> <span class="var">AT</span>&gt;<span class="var">ram</span> :<span class="var">ram</span><br/>
+<span class="macro">@end(<span class="name">sections</span>)</span><br/>
+</code></div>
+<ul><li>
+The stack has a fixed size.
+</li><li>
+The startup code will set the stack accordingly.
+</li></ul>
+</div>
+</div>
+<h2>Assembly startup</h2>
+<div class="slides">
+<div>
+<div>
+<h2>Assembly startup</h2>
+</div>
+<ul><li>
+The startup code uses the information from the linker description file  to initialize the machine accordingly.
+</li><li>
+A special C++ function performs the high-level setup.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@Def(<span class="name">file: init.S</span>)</span><br/>
+<span class="in1"></span><span class="macro">@put(<span class="name">init</span>)</span><br/>
+<span class="macro">@End(<span class="name">file: init.S</span>)</span><br/>
+</code></div>
+<ul><li>
+An assembly file contains the startup code
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@def(<span class="name">init</span>)</span><br/>
+<span class="in1"></span>.<span class="var">section</span> .<span class="var">init</span><br/>
+<span class="in1"></span>.<span class="var">global</span> <span class="var">_enter</span><br/>
+<span class="in1"></span><span class="var">_enter</span>:<br/>
+<span class="in2"></span><span class="macro">@put(<span class="name">enter</span>)</span><br/>
+<span class="macro">@end(<span class="name">init</span>)</span><br/>
+</code></div>
+<ul><li>
+The <code><span class="var">_enter</span></code> function is the first entry point of the <code>.<span class="var">init</span></code> section.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@def(<span class="name">enter</span>)</span><br/>
+<span class="in1"></span>.<span class="var">option</span> <span class="var">push</span><br/>
+<span class="in1"></span>.<span class="var">option</span> <span class="var">norelax</span><br/>
+<span class="in2"></span><span class="var">la</span> <span class="var">gp</span>, <span class="var">__global_pointer$</span><br/>
+<span class="in1"></span>.<span class="var">option</span> <span class="var">pop</span><br/>
+<span class="macro">@end(<span class="name">enter</span>)</span><br/>
+</code></div>
+<ul><li>
+To support relaxation a global pointer is set to the position specified  in linker description file.
+</li><li>
+Data can be fetched relative to this pointer.
+</li><li>
+No relaxation must be performed to set this pointer.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">enter</span>)</span><br/>
+    <span class="var">la</span> <span class="var">t0</span>, <span class="var">early_trap_vector</span><br/>
+    <span class="var">csrw</span> <span class="var">mtvec</span>, <span class="var">t0</span><br/>
+<span class="macro">@end(<span class="name">enter</span>)</span><br/>
+</code></div>
+<ul><li>
+Installs a dummy trap vector.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">init</span>)</span><br/>
+<span class="in1"></span>.<span class="var">align</span> <span class="num">2</span><br/>
+<span class="in1"></span><span class="var">early_trap_vector</span>:<br/>
+<span class="in2"></span><span class="var">j</span> <span class="var">early_trap_vector</span><br/>
+<span class="macro">@end(<span class="name">init</span>)</span><br/>
+</code></div>
+<ul><li>
+The dummy implementation stops the processor with a busy loop.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">enter</span>)</span><br/>
+<span class="in1"></span><span class="var">la</span> <span class="var">sp</span>, <span class="var">_sp</span><br/>
+<span class="in1"></span><span class="var">andi</span> <span class="var">sp</span>, <span class="var">sp</span>, -<span class="num">16</span><br/>
+<span class="macro">@end(<span class="name">enter</span>)</span><br/>
+</code></div>
+<ul><li>
+Sets the stack pointer.
+</li><li>
+Make sure that it is on a 16-byte boundary.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">enter</span>)</span><br/>
+<span class="in2"></span><span class="var">csrr</span> <span class="var">a0</span>, <span class="var">mhartid</span><br/>
+<span class="in1"></span><span class="num">1</span>:<br/>
+<span class="in2"></span><span class="var">bnez</span> <span class="var">a0</span>, <span class="num">1b</span><br/>
+<span class="macro">@end(<span class="name">enter</span>)</span><br/>
+</code></div>
+<ul><li>
+Only continue on core #0.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">enter</span>)</span><br/>
+<span class="in1"></span><span class="var">call</span> <span class="var">setup</span><br/>
+<span class="in1"></span><span class="var">call</span> <span class="var">main</span><br/>
+<span class="macro">@end(<span class="name">enter</span>)</span><br/>
+</code></div>
+<ul><li>
+Call C++ code.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">enter</span>)</span><br/>
+<span class="in1"></span><span class="num">1</span>:<br/>
+<span class="in2"></span><span class="var">j</span> <span class="num">1b</span><br/>
+<span class="macro">@end(<span class="name">enter</span>)</span><br/>
+</code></div>
+<ul><li>
+Busy-Wait after program is finished
+</li></ul>
+</div>
+</div>
+<h2>C++ setup</h2>
+<div class="slides">
+<div>
+<div>
+<h2>C++ setup</h2>
+</div>
+<ul><li>
+Calls all needed constructors
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@Def(<span class="name">file: setup.cpp</span>)</span><br/>
+<span class="in1"></span><span class="macro">@put(<span class="name">setup</span>)</span><br/>
+<span class="macro">@End(<span class="name">file: setup.cpp</span>)</span><br/>
+</code></div>
+<ul><li>
+Contains setup code.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@def(<span class="name">setup</span>)</span><br/>
+<span class="in1"></span><span class="type">extern</span> <span class="str">"C"</span><br/>
+<span class="in2"></span><span class="type">void</span> (**<span class="var">_init_array_begin</span>)()<br/>
+<span class="in3"></span><span class="fn">__attribute__</span>((<span class="var">weak</span>));<br/>
+<span class="in1"></span><span class="type">extern</span> <span class="str">"C"</span><br/>
+<span class="in2"></span><span class="type">void</span> (**<span class="var">_init_array_end</span>)()<br/>
+<span class="in3"></span><span class="fn">__attribute__</span>((<span class="var">weak</span>));<br/>
+<span class="macro">@end(<span class="name">setup</span>)</span><br/>
+</code></div>
+<ul><li>
+Begin and end of the array with setup functions.
+</li><li>
+In very simple programs these labels may not exist (so <code><span class="num">nullptr</span></code> will  be used instead).
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">setup</span>)</span><br/>
+<span class="in1"></span><span class="type">extern</span> <span class="str">"C"</span> <span class="type">void</span> <span class="fn">setup</span>() {<br/>
+<span class="in2"></span><span class="type">auto</span> <span class="var">cur</span> = <span class="var">_init_array_begin</span>;<br/>
+<span class="in2"></span><span class="keyword">while</span> (<span class="var">cur</span> &lt; <span class="var">_init_array_end</span>) {<br/>
+<span class="in3"></span>(*(*<span class="var">cur</span>++))();<br/>
+<span class="in2"></span>}<br/>
+<span class="in1"></span>}<br/>
+<span class="macro">@end(<span class="name">setup</span>)</span><br/>
+</code></div>
+<ul><li>
+The setup code iterates through the array and calls the constructors.
+</li></ul>
+</div>
+</body>
+</html>

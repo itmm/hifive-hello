@@ -1,47 +1,45 @@
 
+	
 .PHONY: all clean
 
-HXs := $(wildcard *.x)
-SRCs := $(shell hx-files.sh $(HXs))
-OBJs := $(filter %.o, $(SRCs:.S=.o) $(SRCs:.cpp=.o))
-
 all: hello.hex
+
+HXs := $(wildcard *.x)
+
+SRCs := $(shell hx-files.sh $(HXs))
+
+OBJs := $(filter %.o, $(SRCs:.S=.o) $(SRCs:.cpp=.o))
 
 hx-run: $(HXs)
 	hx
 	touch $@
 
+$(SRCs): hx-run
+
 TARGET := riscv32-unknown-elf
+
 CC := $(TARGET)-gcc
 CXX := $(TARGET)-g++
 LD := $(TARGET)-ld -T memory.lds
-CXXFLAGS += -MD -O2 -I.
-CFLAGS += -MD
 
-$(OBJs): hx-run
+CXXFLAGS += -MD -Wall -O2 -I.
+CFLAGS += -MD -Wall -O2
 
 hello: $(OBJs)
 	$(LD) $^ -o $@
-	
+
 hello.hex: hello
 	$(TARGET)-objcopy $^ -O ihex $@
 
-clean:
-	rm -f $(OBJs) hello hello hello.hex hx-run
-
-hxs:
-	@echo ${HXs}
-
-srcs:
-	@echo ${SRCs}
-
-objs:
-	@echo ${OBJs}
-
 iostream: iostream.h
-	@echo
+	@echo >/dev/null
 
 DEPs := $(wildcard *.d)
 ifneq ($(DEPs),)
   include $(DEPs)
 endif
+
+clean:
+	rm -f $(OBJs) $(DEPs) hello
+	rm -f hello.hex hx-run
+

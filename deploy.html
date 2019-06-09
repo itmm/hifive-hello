@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Putting the executable on the HiFive1</title>
+<link rel="stylesheet" type="text/css" href="slides/slides.css"></head>
+<body>
+<h1>Putting the executable on the HiFive1</h1>
+<div class="slides">
+<div>
+<div>
+<h1>Putting the executable on the HiFive1</h1>
+</div>
+<ul><li>
+This section describes the Makefile that is used to build the image.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@Def(<span class="name">file: Makefile</span>)</span><br/>
+<span class="in1"></span><span class="macro">@put(<span class="name">entries</span>)</span><br/>
+<span class="macro">@End(<span class="name">file: Makefile</span>)</span><br/>
+</code></div>
+<ul><li>
+Entries in the <code><span class="type">Makefile</span></code>.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@def(<span class="name">entries</span>)</span><br/>
+.<span class="var">PHONY</span>: <span class="var">all</span> <span class="var">clean</span><br/>
+<span class="macro">@end(<span class="name">entries</span>)</span><br/>
+</code></div>
+<ul><li>
+There exist two main targets in the <code><span class="type">Makefile</span></code>.
+</li><li>
+The <code><span class="var">all</span></code> target builds everything.
+</li><li>
+The <code><span class="var">clean</span></code> target removes all temporary files.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">entries</span>)</span><br/>
+<span class="var">all</span>: <span class="var">hello</span>.<span class="var">hex</span><br/>
+<span class="macro">@end(<span class="name">entries</span>)</span><br/>
+</code></div>
+<ul><li>
+The main target is an Intel Hex file of the image that can be copied on  the device.
+</li></ul>
+</div>
+</div>
+<h2><code><span class="var">hx</span></code> part</h2>
+<div class="slides">
+<div>
+<div>
+<h2><code><span class="var">hx</span></code> part</h2>
+</div>
+<ul><li>
+Generates source files from the <code><span class="var">hx</span></code> sources
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">entries</span>)</span><br/>
+<span class="var">HXs</span> := <span class="fn">$</span>(<span class="var">wildcard</span> *.<span class="var">x</span>)<br/>
+<span class="macro">@end(<span class="name">entries</span>)</span><br/>
+</code></div>
+<ul><li>
+The <code><span class="var">hx</span></code> sources are all files ending in <code>.<span class="var">x</span></code>.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">entries</span>)</span><br/>
+<span class="var">SRCs</span> := <span class="fn">$</span>(<span class="var">shell</span> <span class="var">hx</span>-<span class="var">files</span>.<span class="var">sh</span> <span class="fn">$</span>(<span class="var">HXs</span>))<br/>
+<span class="macro">@end(<span class="name">entries</span>)</span><br/>
+</code></div>
+<ul><li>
+The sources are all files that are generated from the <code><span class="var">hx</span></code> files.
+</li><li>
+<code><span class="var">hx</span></code> provides a script to get these filenames.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">entries</span>)</span><br/>
+<span class="var">OBJs</span> := <span class="fn">$</span>(<span class="var">filter</span> %.<span class="var">o</span>, <span class="fn">$</span>(<span class="var">SRCs</span>:.<span class="var">S</span>=.<span class="var">o</span>) <span class="fn">$</span>(<span class="var">SRCs</span>:.<span class="var">cpp</span>=.<span class="var">o</span>))<br/>
+<span class="macro">@end(<span class="name">entries</span>)</span><br/>
+</code></div>
+<ul><li>
+Object files are only generated from assembler and C++ sources.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">entries</span>)</span><br/>
+<span class="var">hx</span>-<span class="var">run</span>: <span class="fn">$</span>(<span class="var">HXs</span>)<br/>
+<span class="in1"></span><span class="var">hx</span><br/>
+<span class="in1"></span><span class="var">touch</span> <span class="var">$</span>@<br/>
+<span class="macro">@end(<span class="name">entries</span>)</span><br/>
+</code></div>
+<ul><li>
+A special dummy file is used to check if <code><span class="var">hx</span></code> must run again.
+</li><li>
+As <code><span class="var">hx</span></code> is not touching files that are not changed it will be otherwise  invoked too often.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">entries</span>)</span><br/>
+<span class="fn">$</span>(<span class="var">SRCs</span>): <span class="var">hx</span>-<span class="var">run</span><br/>
+<span class="macro">@end(<span class="name">entries</span>)</span><br/>
+</code></div>
+<ul><li>
+The generated files can be treated as up to date, if the dummy file is  newer than the <code><span class="var">hx</span></code> files.
+</li></ul>
+</div>
+</div>
+<h2>Building for RISC-V</h2>
+<div class="slides">
+<div>
+<div>
+<h2>Building for RISC-V</h2>
+</div>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">entries</span>)</span><br/>
+<span class="var">TARGET</span> := <span class="var">riscv32</span>-<span class="var">unknown</span>-<span class="var">elf</span><br/>
+<span class="macro">@end(<span class="name">entries</span>)</span><br/>
+</code></div>
+<ul><li>
+The target is a prefix of all programs in the toolchain.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">entries</span>)</span><br/>
+<span class="var">CC</span> := <span class="fn">$</span>(<span class="var">TARGET</span>)-<span class="var">gcc</span><br/>
+<span class="var">CXX</span> := <span class="fn">$</span>(<span class="var">TARGET</span>)-<span class="var">g</span>++<br/>
+<span class="var">LD</span> := <span class="fn">$</span>(<span class="var">TARGET</span>)-<span class="var">ld</span> -<span class="var">T</span> <span class="var">memory</span>.<span class="var">lds</span><br/>
+<span class="macro">@end(<span class="name">entries</span>)</span><br/>
+</code></div>
+<ul><li>
+The compilers and linker are changed to build for RISC-V.
+</li><li>
+The C compiler is used to assemble the assembly files.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">entries</span>)</span><br/>
+<span class="var">CXXFLAGS</span> += -<span class="var">MD</span> -<span class="type">Wall</span> -<span class="var">O2</span> -<span class="var">I</span>.<br/>
+<span class="var">CFLAGS</span> += -<span class="var">MD</span> -<span class="type">Wall</span> -<span class="var">O2</span><br/>
+<span class="macro">@end(<span class="name">entries</span>)</span><br/>
+</code></div>
+<ul><li>
+The compilers are optimizing for size.
+</li><li>
+All warnings will be printed.
+</li><li>
+Dependency files will be generated.
+</li><li>
+The C++ compiler will include files from the local directory before  using system includes.
+</li><li>
+This is needed, because the C++ library is not build for the HiFive1.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">entries</span>)</span><br/>
+<span class="var">hello</span>: <span class="fn">$</span>(<span class="var">OBJs</span>)<br/>
+<span class="in1"></span><span class="fn">$</span>(<span class="var">LD</span>) <span class="var">$</span>^ -<span class="var">o</span> <span class="var">$</span>@<br/>
+<span class="macro">@end(<span class="name">entries</span>)</span><br/>
+</code></div>
+<ul><li>
+Link executable
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">entries</span>)</span><br/>
+<span class="var">hello</span>.<span class="var">hex</span>: <span class="var">hello</span><br/>
+<span class="in1"></span><span class="fn">$</span>(<span class="var">TARGET</span>)-<span class="var">objcopy</span> <span class="var">$</span>^ -<span class="var">O</span> <span class="var">ihex</span> <span class="var">$</span>@<br/>
+<span class="macro">@end(<span class="name">entries</span>)</span><br/>
+</code></div>
+<ul><li>
+Generate Intel Hex file.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">entries</span>)</span><br/>
+<span class="var">iostream</span>: <span class="var">iostream</span>.<span class="var">h</span><br/>
+<span class="in1"></span>@<span class="var">echo</span> &gt;/<span class="var">dev</span>/<span class="num">null</span><br/>
+<span class="macro">@end(<span class="name">entries</span>)</span><br/>
+</code></div>
+<ul><li>
+<code><span class="var">make</span></code> treats <code><span class="var">iostream</span></code> as the name of an executable.
+</li><li>
+An empty rule is provided, so that the default linking rule will not be  used.
+</li></ul>
+</div>
+</div>
+<h2>Dependency management</h2>
+<div class="slides">
+<div>
+<div>
+<h2>Dependency management</h2>
+</div>
+<ul><li>
+Include dependency files
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">entries</span>)</span><br/>
+<span class="var">DEPs</span> := <span class="fn">$</span>(<span class="var">wildcard</span> *.<span class="var">d</span>)<br/>
+<span class="var">ifneq</span> (<span class="fn">$</span>(<span class="var">DEPs</span>),)<br/>
+  <span class="var">include</span> <span class="fn">$</span>(<span class="var">DEPs</span>)<br/>
+<span class="var">endif</span><br/>
+<span class="macro">@end(<span class="name">entries</span>)</span><br/>
+</code></div>
+<ul><li>
+If there are dependency files, they will be included.
+</li></ul>
+</div>
+</div>
+<h2>Clean</h2>
+<div class="slides">
+<div>
+<div>
+<h2>Clean</h2>
+</div>
+<ul><li>
+Remove temporary files
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@add(<span class="name">entries</span>)</span><br/>
+<span class="var">clean</span>:<br/>
+<span class="in1"></span><span class="var">rm</span> -<span class="var">f</span> <span class="fn">$</span>(<span class="var">OBJs</span>) <span class="fn">$</span>(<span class="var">DEPs</span>) <span class="var">hello</span><br/>
+<span class="in1"></span><span class="var">rm</span> -<span class="var">f</span> <span class="var">hello</span>.<span class="var">hex</span> <span class="var">hx</span>-<span class="var">run</span><br/>
+<span class="macro">@end(<span class="name">entries</span>)</span><br/>
+</code></div>
+<ul><li>
+Remove all temporary files
+</li></ul>
+</div>
+</body>
+</html>
