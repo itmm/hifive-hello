@@ -8,7 +8,7 @@ CXXFLAGS := -O2 -I.
 
 all: hello.hex
 
-hello: hello.o startup.o setup.o iostream.o
+hello: hello.o init.o setup.o iostream.o
 	$(LD) $^ -o $@
 	
 hello.hex: hello
