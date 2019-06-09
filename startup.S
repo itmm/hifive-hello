@@ -21,17 +21,7 @@ _enter:
 1:
 	bnez a0, 1b
 
-	// zero BSS segment
-  	la t1, _bss_begin
- 	la t2, _bss_end
-	bge t1, t2, 2f
-1:
-	sw x0, (t1)
-	addi t1, t1, 4
-	blt t1, t2, 1b
-2:
-
-	// main program
+	call setup
 	call main
 
 	// spin to death

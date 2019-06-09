@@ -24,6 +24,11 @@ SECTIONS
 		*(.init)
 	} >flash AT>flash :flash
 
+	.init_array : {
+		PROVIDE ( _init_array_begin = . );
+		KEEP(*(SORT_BY_INIT_PRIORITY(.init_array.*)));
+		PROVIDE ( _init_array_end = . );
+	} >flash AT>flash :flash
 
 	. = ALIGN(8);
 	.text 		:

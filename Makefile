@@ -4,11 +4,11 @@ TARGET := riscv32-unknown-elf
 CC := $(TARGET)-gcc
 CXX := $(TARGET)-g++
 LD := $(TARGET)-ld -T memory.lds
-CXXFLAGS := -O2
+CXXFLAGS := -O2 -I.
 
 all: hello.hex
 
-hello: hello.o startup.o
+hello: hello.o startup.o setup.o iostream.o
 	$(LD) $^ -o $@
 	
 hello.hex: hello
