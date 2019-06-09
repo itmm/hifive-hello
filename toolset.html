@@ -11,9 +11,134 @@
 <div>
 <h1>Building the C++ Toolchain</h1>
 </div>
+<ul><li>
+Building the C++ Toolchain on a Rasperry Pi.
+</li></ul>
 </div>
 </div>
-<p>TODO: Write about the Toolchain
+<h2>Prerequisit: More Memory</h2>
+<div class="slides">
+<div>
+<div>
+<h2>Prerequisit: More Memory</h2>
+</div>
+<ul><li>
+Increase the swap size.
+</li></ul>
+</div>
+</div>
+<p>Building the complete toolchain takes a lot of time. And a lot of memory.
+</p>
+<p>To increase the usable memory, I adjusted the swap file size of my Raspbian installation.
+</p>
+<p>Edit the file <code>/<span class="var">etc</span>/<span class="var">dphys</span>-<span class="var">swapfile</span></code>. You must have administration privileges to do that. Change the entry <code><span class="var">CONF_SWAPSIZE</span></code> to a bigger value. I set mine to <code><span class="num">10240</span></code>.
+</p>
+<p>Afterwards you can activate the new swap file size with
+</p>
+<div class="slides">
+<div><div>
+<code>
+<span class="var">$</span> <span class="var">sudo</span> /<span class="var">etc</span>/<span class="var">init</span>.<span class="var">d</span>/<span class="var">dphys</span>-<span class="var">swapfile</span> <span class="var">restart</span><br/>
+</code></div>
+<ul><li>
+Activate new swap file size.
+</li></ul>
+</div>
+</div>
+<h2>Getting the Toolchain sources</h2>
+<div class="slides">
+<div>
+<div>
+<h2>Getting the Toolchain sources</h2>
+</div>
+<ul><li>
+Cloning the Repository with the Toolchain sources.
+</li></ul>
+</div>
+</div>
+<p>I took the sources from Github:
+</p>
+<div class="slides">
+<div><div>
+<code>
+<span class="var">$</span> <span class="var">git</span> <span class="var">clone</span> --<span class="var">recursive</span> <span class="var">https</span>://<span class="var">github</span>.<span class="var">com</span>/<span class="var">riscv</span>/<span class="var">riscv</span>-<span class="var">gnu</span>-<span class="var">toolchain</span><br/>
+</code></div>
+<ul><li>
+Cloning source tree.
+</li></ul>
+</div>
+</div>
+<p>That took roughly an hour on my Raspberry Pi.
+</p>
+<p>Also I installed the prerequisites mentioned on the Github page:
+</p>
+<div class="slides">
+<div><div>
+<code>
+<span class="var">$</span> <span class="var">sudo</span> <span class="var">apt</span>-<span class="var">get</span> <span class="var">install</span> <span class="var">autoconf</span> <span class="var">automake</span> \<br/>
+<span class="in1"></span><span class="var">autotools</span>-<span class="var">dev</span> <span class="var">curl</span> <span class="var">libmpc</span>-<span class="var">dev</span> \<br/>
+<span class="in1"></span><span class="var">libmpfr</span>-<span class="var">dev</span> <span class="var">libgmp</span>-<span class="var">dev</span> <span class="var">gawk</span> \<br/>
+<span class="in1"></span><span class="var">build</span>-<span class="var">essential</span> <span class="var">bison</span> <span class="var">flex</span> <span class="var">texinfo</span> \<br/>
+<span class="in1"></span><span class="var">gperf</span> <span class="var">libtool</span> <span class="var">patchutils</span> <span class="var">bc</span> \<br/>
+<span class="in1"></span><span class="var">zlib1g</span>-<span class="var">dev</span> <span class="var">libexpat</span>-<span class="var">dev</span><br/>
+</code></div>
+<ul><li>
+Fetching tools needed to build the Toolchain
+</li></ul>
+</div>
+</div>
+<p>Also you need a lot of disk space for building the Toolchain. The documentation says, that 8 GB free space are needed.
+</p>
+</div>
+<h2>Building the Toolchain</h2>
+<div class="slides">
+<div>
+<div>
+<h2>Building the Toolchain</h2>
+</div>
+<ul><li>
+Building the RISC-V specific tools.
+</li></ul>
+</div>
+</div>
+<p>Following the documentation I first created a directory where everything will be installed.
+</p>
+<div class="slides">
+<div><div>
+<code>
+<span class="var">$</span> <span class="var">sudo</span> <span class="var">mkdir</span> /<span class="var">opt</span>/<span class="var">riscv</span><br/>
+<span class="var">$</span> <span class="var">sudo</span> <span class="var">chown</span> <span class="var">timm</span>:<span class="var">timm</span> /<span class="var">opt</span>/<span class="var">riscv</span><br/>
+<span class="var">$</span> <span class="var">export</span> <span class="var">PATH</span>=<span class="str">"/opt/riscv/bin:$PATH"</span><br/>
+</code></div>
+<ul><li>
+Create directory.
+</li><li>
+And make it accessible.
+</li><li>
+Of course you must choose your own login name.
+</li><li>
+And I put the directory <code>/<span class="var">opt</span>/<span class="var">riscv</span>/<span class="var">bin</span></code> into my <code><span class="var">PATH</span></code>.
+</li></ul>
+</div>
+</div>
+<p>Then I changed into the cloned repository and build the compiler with the following commands:
+</p>
+<div class="slides">
+<div><div>
+<code>
+<span class="var">$</span> ./<span class="var">configure</span> --<span class="var">prefix</span>=/<span class="var">opt</span>/<span class="var">riscv</span> \<br/>
+<span class="in1"></span>--<span class="var">with</span>-<span class="var">arch</span>=<span class="var">rv32imac</span> \<br/>
+<span class="in1"></span>--<span class="var">with</span>-<span class="var">abi</span>=<span class="var">ilp32</span><br/>
+<span class="var">$</span> <span class="var">nice</span> <span class="var">make</span> -<span class="var">j</span> <span class="num">1</span><br/>
+</code></div>
+<ul><li>
+The arch and abi specification are from the <code><span class="var">sifive</span>/<span class="var">freedom</span>-<span class="var">e</span>-<span class="var">sdk</span></code>  project.
+</li><li>
+The file <code><span class="var">settings</span>.<span class="var">mk</span></code> in the folder <code><span class="var">bsp</span>/<span class="var">sifive</span>-<span class="var">hifive1</span>-<span class="var">revb</span></code> contains  the properties of the board.
+</li></ul>
+</div>
+</div>
+<p>I run the <code><span class="var">make</span></code> with <code><span class="var">nice</span></code> and only one process to avoid blocking my box completely. It take a couple of hours. So be patient.
 </p>
 </body>
 </html>

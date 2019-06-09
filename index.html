@@ -13,6 +13,8 @@
 </div>
 </div>
 </div>
+<p>This is the documentation for my first bare metal project for the HiFive1 board. The repository is hosted at https://github.com/itmm/hifive-hello.
+</p>
 <p>It is a bit difficult to build a project for the HiFive1 board (see https://wwww.SiFive.com). At least for me. I only use Raspberry Pis (see https://www.raspberrypi.com) to do my development. And the building tools do not support to build on an ARM platform. So I have to do it the hard way.
 </p>
 <p>This document describes how to build the tools needed to program the HiFive1 from scratch on a Rasperry Pi 3B+.
@@ -31,7 +33,7 @@
 <span class="macro">@End(<span class="name">file: hello.cpp</span>)</span><br/>
 </code></div>
 <ul><li>
-Print a simple message and terminate
+Print a simple message and terminate.
 </li></ul>
 </div>
 </div>
@@ -43,7 +45,7 @@ Print a simple message and terminate
 <span class="var">$</span> <span class="keyword">g++</span> <span class="keyword">-Wall</span> <span class="str">hello.cpp</span> <span class="keyword">-o</span> <span class="str">hello</span><br/>
 </code></div>
 <ul><li>
-Build the program locally
+Build the program locally.
 </li></ul>
 </div>
 </div>
@@ -55,7 +57,7 @@ Build the program locally
 <span class="var">$</span> <span class="keyword">sudo</span> <span class="keyword">apt</span> <span class="keyword">intall</span> <span class="str">g++</span><br/>
 </code></div>
 <ul><li>
-Install the GCC C++ compiler for Rasperry Pi
+Install the GCC C++ compiler for Rasperry Pi.
 </li></ul>
 </div>
 </div>
@@ -73,7 +75,7 @@ Install the GCC C++ compiler for Rasperry Pi
 <span class="macro">@inc(<span class="name"><a href="toolset.html">toolset.x</a></span>)</span><br/>
 </code></div>
 <ul><li>
-Build the GCC C++ Compiler for HiFive1
+Build the GCC C++ Compiler for HiFive1.
 </li></ul>
 </div>
 <div><div>
@@ -81,7 +83,7 @@ Build the GCC C++ Compiler for HiFive1
 <span class="macro">@inc(<span class="name"><a href="iostream.html">iostream.x</a></span>)</span><br/>
 </code></div>
 <ul><li>
-Write a minimal implementation of <code><span class="type">std</span>::<span class="var">cout</span></code> that writes a C-style  string to the UART
+Write a minimal implementation of <code><span class="type">std</span>::<span class="var">cout</span></code> that writes a C-style  string to the UART.
 </li></ul>
 </div>
 <div><div>
@@ -89,7 +91,7 @@ Write a minimal implementation of <code><span class="type">std</span>::<span cla
 <span class="macro">@inc(<span class="name"><a href="setup.html">setup.x</a></span>)</span><br/>
 </code></div>
 <ul><li>
-Write Startup-Code (in RISC-V assembly and C++) to make the processor  ready for calling <code><span class="var">main</span></code>
+Write Startup-Code (in RISC-V assembly and C++) to make the processor  ready for calling <code><span class="var">main</span></code>.
 </li></ul>
 </div>
 <div><div>
@@ -97,7 +99,7 @@ Write Startup-Code (in RISC-V assembly and C++) to make the processor  ready for
 <span class="macro">@inc(<span class="name"><a href="deploy.html">deploy.x</a></span>)</span><br/>
 </code></div>
 <ul><li>
-Put the resulting program on the HiFive1 and watch the result
+Put the resulting program on the HiFive1 and watch the result.
 </li></ul>
 </div>
 </div>

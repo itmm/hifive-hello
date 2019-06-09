@@ -1,5 +1,9 @@
 # Building my first program for HiFive1 Rev. B
 
+This is the documentation for my first bare metal project for the HiFive1
+board.
+The repository is hosted at https://github.com/itmm/hifive-hello.
+
 It is a bit difficult to build a project for the HiFive1 board
 (see https://wwww.SiFive.com).
 At least for me.
@@ -23,14 +27,14 @@ print the message over the UART.
 	}
 @End(file: hello.cpp)
 ```
-* Print a simple message and terminate
+* Print a simple message and terminate.
 
 You can build the program on the Raspberry Pi with the command
 
 ```
 $ @k(g++) @k(-Wall) @s(hello.cpp) @k(-o) @s(hello)
 ```
-* Build the program locally
+* Build the program locally.
 
 If the commando is not working maybe you need to install the C++
 compiler with
@@ -38,7 +42,7 @@ compiler with
 ```
 $ @k(sudo) @k(apt) @k(intall) @s(g++)
 ```
-* Install the GCC C++ compiler for Rasperry Pi
+* Install the GCC C++ compiler for Rasperry Pi.
 
 But that is not working for the HiFive1.
 The HiFive1 is running a RISC-V processor (see https://www.riscv.org).
@@ -61,24 +65,24 @@ So here are the next steps:
 ```
 @inc(toolset.x)
 ```
-* Build the GCC C++ Compiler for HiFive1
+* Build the GCC C++ Compiler for HiFive1.
 
 ```
 @inc(iostream.x)
 ```
 * Write a minimal implementation of `std::cout` that writes a C-style
-  string to the UART
+  string to the UART.
 
 ```
 @inc(setup.x)
 ```
 * Write Startup-Code (in RISC-V assembly and C++) to make the processor
-  ready for calling `main`
+  ready for calling `main`.
 
 ```
 @inc(deploy.x)
 ```
-* Put the resulting program on the HiFive1 and watch the result
+* Put the resulting program on the HiFive1 and watch the result.
 
 I hope that this story will motivate you to also try to develop for a
 RISC-V board.
