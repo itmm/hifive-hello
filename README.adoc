@@ -9,4 +9,4 @@ You can find the documentation for this project at
 
 https://itmm.github.io/hifive-hello/
 
-Kind regards, Timm.https://itmm.github.io/hifive-hello/
+Kind regards, Timm.
