@@ -23,11 +23,20 @@ print the message over the UART.
 	#include <iostream>
 
 	int main() {
+		@put(main);
 		std::cout << "Hello World!\n";
 	}
 @End(file: hello.cpp)
 ```
 * Print a simple message and terminate.
+
+```
+@def(main)
+	std::cout << "Hello World!\n";
+@end(main)
+```
+* The main body is encapsulated in a special fragment.
+* So it can easily be replaced later.
 
 You can build the program on the Raspberry Pi with the command
 

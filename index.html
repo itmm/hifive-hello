@@ -28,12 +28,25 @@
 <span class="in1"></span><span class="keyword">#include</span> &lt;<span class="var">iostream</span>&gt;<br/>
 <br/>
 <span class="in1"></span><span class="type">int</span> <span class="fn">main</span>() {<br/>
+<span class="in2"></span><span class="macro">@put(<span class="name">main</span>)</span>;<br/>
 <span class="in2"></span><span class="type">std</span>::<span class="var">cout</span> &lt;&lt; <span class="str">"Hello World!\n"</span>;<br/>
 <span class="in1"></span>}<br/>
 <span class="macro">@End(<span class="name">file: hello.cpp</span>)</span><br/>
 </code></div>
 <ul><li>
 Print a simple message and terminate.
+</li></ul>
+</div>
+<div><div>
+<code>
+<span class="macro">@def(<span class="name">main</span>)</span><br/>
+<span class="in1"></span><span class="type">std</span>::<span class="var">cout</span> &lt;&lt; <span class="str">"Hello World!\n"</span>;<br/>
+<span class="macro">@end(<span class="name">main</span>)</span><br/>
+</code></div>
+<ul><li>
+The main body is encapsulated in a special fragment.
+</li><li>
+So it can easily be replaced later.
 </li></ul>
 </div>
 </div>
