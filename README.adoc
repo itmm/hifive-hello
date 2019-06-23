@@ -4,3 +4,9 @@ As the tools for the metal framework are not building on a Rasperry Pi I
 used the standard RISC-V GCC Toolchain and try to build a first program.
 It is not as generic as the metal version, but on the other hand there is
 no overhead and everything will be small and clean.
+
+You can find the documentation for this project at
+
+https://itmm.github.io/hifive-hello/
+
+Kind regards, Timm.
