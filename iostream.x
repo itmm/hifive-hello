@@ -51,16 +51,23 @@ standard `@s(iostream)` library.
 	class ostream {
 			@put(privates)
 		public:
-			@put(methods)
+			@Put(ostream methods)
 	};
 @end(declarations)
 ```
 * The class has `public` and `private` attributes
 
 ```
+@Def(ostream methods)
+	@put(methods)
+@End(ostream methods)
+```
+* Make methods of `ostream` class available globally
+
+```
 @def(methods)
 	ostream() {
-		@put(setup uart);
+		@Put(setup uart);
 	}
 @end(methods)
 ```
@@ -107,8 +114,8 @@ the values again and again from memory.
   variable
 
 ```
-@def(setup uart)
-	static const int tx_control { 0x08 };
+@Def(setup uart)
+	static const int tx_control { 0x02 };
 	uart()[tx_control] |= 1;
 @end(setup uart)
 ```
@@ -118,8 +125,9 @@ the values again and again from memory.
 ```
 @add(privates)
 	void put(char c) {
-		while (*uart() < 0) { }
-		*uart() = c;
+		static const int tx_data { 0x00 };
+		while (uart()[tx_data] < 0) { }
+		uart()[tx_data] = c;
 	}
 @end(privates)
 ```

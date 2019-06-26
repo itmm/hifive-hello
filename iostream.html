@@ -92,7 +92,7 @@ The <code>&lt;&lt;</code> operator sends a string to the UART.
 <span class="in1"></span><span class="keyword">class</span> <span class="type">ostream</span> {<br/>
 <span class="in3"></span><span class="macro">@put(<span class="name">privates</span>)</span><br/>
 <span class="in2"></span><span class="keyword">public</span>:<br/>
-<span class="in3"></span><span class="macro">@put(<span class="name">methods</span>)</span><br/>
+<span class="in3"></span><span class="macro">@Put(<span class="name">ostream methods</span>)</span><br/>
 <span class="in1"></span>};<br/>
 <span class="macro">@end(<span class="name">declarations</span>)</span><br/>
 </code></div>
@@ -102,9 +102,19 @@ The class has <code><span class="keyword">public</span></code> and <code><span c
 </div>
 <div><div>
 <code>
+<span class="macro">@Def(<span class="name">ostream methods</span>)</span><br/>
+<span class="in1"></span><span class="macro">@put(<span class="name">methods</span>)</span><br/>
+<span class="macro">@End(<span class="name">ostream methods</span>)</span><br/>
+</code></div>
+<ul><li>
+Make methods of <code><span class="type">ostream</span></code> class available globally
+</li></ul>
+</div>
+<div><div>
+<code>
 <span class="macro">@def(<span class="name">methods</span>)</span><br/>
 <span class="in1"></span><span class="fn">ostream</span>() {<br/>
-<span class="in2"></span><span class="macro">@put(<span class="name">setup uart</span>)</span>;<br/>
+<span class="in2"></span><span class="macro">@Put(<span class="name">setup uart</span>)</span>;<br/>
 <span class="in1"></span>}<br/>
 <span class="macro">@end(<span class="name">methods</span>)</span><br/>
 </code></div>
@@ -161,8 +171,8 @@ Accessor returns a pointer to the first register as a <code><span class="var">vo
 </div>
 <div><div>
 <code>
-<span class="macro">@def(<span class="name">setup uart</span>)</span><br/>
-<span class="in1"></span><span class="keyword">static</span> <span class="type">const</span> <span class="type">int</span> <span class="var">tx_control</span> { <span class="num">0x08</span> };<br/>
+<span class="macro">@Def(<span class="name">setup uart</span>)</span><br/>
+<span class="in1"></span><span class="keyword">static</span> <span class="type">const</span> <span class="type">int</span> <span class="var">tx_control</span> { <span class="num">0x02</span> };<br/>
 <span class="in1"></span><span class="fn">uart</span>()[<span class="var">tx_control</span>] |= <span class="num">1</span>;<br/>
 <span class="macro">@end(<span class="name">setup uart</span>)</span><br/>
 </code></div>
@@ -174,8 +184,9 @@ Bit <code><span class="num">1</span></code> of the <code><span class="var">tx_co
 <code>
 <span class="macro">@add(<span class="name">privates</span>)</span><br/>
 <span class="in1"></span><span class="type">void</span> <span class="fn">put</span>(<span class="type">char</span> <span class="var">c</span>) {<br/>
-<span class="in2"></span><span class="keyword">while</span> (*<span class="fn">uart</span>() &lt; <span class="num">0</span>) { }<br/>
-<span class="in2"></span>*<span class="fn">uart</span>() = <span class="var">c</span>;<br/>
+<span class="in2"></span><span class="keyword">static</span> <span class="type">const</span> <span class="type">int</span> <span class="var">tx_data</span> { <span class="num">0x00</span> };<br/>
+<span class="in2"></span><span class="keyword">while</span> (<span class="fn">uart</span>()[<span class="var">tx_data</span>] &lt; <span class="num">0</span>) { }<br/>
+<span class="in2"></span><span class="fn">uart</span>()[<span class="var">tx_data</span>] = <span class="var">c</span>;<br/>
 <span class="in1"></span>}<br/>
 <span class="macro">@end(<span class="name">privates</span>)</span><br/>
 </code></div>

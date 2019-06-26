@@ -13,16 +13,21 @@
 	};
 
 	void put(char c) {
-		while (*uart() < 0) { }
-		*uart() = c;
+		static const int tx_data { 0x00 };
+		while (uart()[tx_data] < 0) { }
+		uart()[tx_data] = c;
 	}
 
 		public:
 			
+	
 	ostream() {
 		
-	static const int tx_control { 0x08 };
+	static const int tx_control { 0x02 };
 	uart()[tx_control] |= 1;
+
+	static const int rx_control { 0x03 };
+	uart()[rx_control] |= 1;
 ;
 	}
 
@@ -35,6 +40,28 @@
 		put(*s);
 	}
 ;
+		return *this;
+	}
+
+
+	int get() {
+		static const int rx_data { 0x01 };
+		int res = -1;
+		while (res < 0) {
+			res = uart()[rx_data];
+		}
+		return res & 0xff;
+	}
+
+	void write_num(int v) {
+		int next = v / 10;
+		if (next) { write_num(next); }
+		put((v % 10) + '0');
+	}
+
+	ostream &operator<<(int v) {
+		if (v < 0) { put('-'); }
+		write_num(v);
 		return *this;
 	}
 

@@ -24,7 +24,6 @@ print the message over the UART.
 
 	int main() {
 		@put(main);
-		std::cout << "Hello World!\n";
 	}
 @End(file: hello.cpp)
 ```
@@ -104,6 +103,11 @@ boards.
 I love to invest my programming time on open technology and not depend on
 companies that can crash whole companies on the tweets of totalitarian
 presidents.
+
+```
+@inc(read.x)
+```
+* Augment the sample program to read characters and numbers.
 
 ## About this document
 
