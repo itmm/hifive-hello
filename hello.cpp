@@ -1,8 +1,12 @@
 
+#line 22 "index.x"
+
 	#include <iostream>
 
 	int main() {
 		
+#line 51 "read.x"
+
 	char buf[2];
 	buf[1] = '\0';
 	for (;;) {
@@ -14,5 +18,7 @@
 			std::cout << "\n";
 		}
 	}
+
+#line 26 "index.x"
 ;
 	}
