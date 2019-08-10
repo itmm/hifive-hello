@@ -49,6 +49,7 @@
 
 ```
 @Rep(main)
+	std::cout << "Simple Echo\n\n";
 	char buf[2];
 	buf[1] = '\0';
 	for (;;) {

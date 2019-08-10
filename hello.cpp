@@ -7,6 +7,7 @@
 		
 #line 51 "read.x"
 
+	std::cout << "Simple Echo\n\n";
 	char buf[2];
 	buf[1] = '\0';
 	for (;;) {
