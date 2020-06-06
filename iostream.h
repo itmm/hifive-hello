@@ -1,15 +1,15 @@
 
-#line 13 "iostream.x"
+#line 13 "iostream.md"
 
 	#pragma once
 
 	namespace std {
 		
-#line 50 "iostream.x"
+#line 50 "iostream.md"
 
 	class ostream {
 			
-#line 104 "iostream.x"
+#line 104 "iostream.md"
 
 	using uart_t = volatile int *;
 	uart_t uart() {
@@ -18,7 +18,7 @@
 		);
 	};
 
-#line 126 "iostream.x"
+#line 126 "iostream.md"
 
 	void put(char c) {
 		static const int tx_data { 0x00 };
@@ -26,36 +26,36 @@
 		uart()[tx_data] = c;
 	}
 
-#line 52 "iostream.x"
+#line 52 "iostream.md"
 
 		public:
 			
-#line 61 "iostream.x"
+#line 61 "iostream.md"
 
 	
-#line 68 "iostream.x"
+#line 68 "iostream.md"
 
 	ostream() {
 		
-#line 117 "iostream.x"
+#line 117 "iostream.md"
 
 	static const int tx_control { 0x02 };
 	uart()[tx_control] |= 1;
 
-#line 7 "read.x"
+#line 7 "read.md"
 
 	static const int rx_control { 0x03 };
 	uart()[rx_control] |= 1;
 
-#line 70 "iostream.x"
+#line 70 "iostream.md"
 ;
 	}
 
-#line 77 "iostream.x"
+#line 77 "iostream.md"
 
 	ostream &operator<<(const char *s) {
 		
-#line 144 "iostream.x"
+#line 144 "iostream.md"
 
 	if (s) for (; *s; ++s) {
 		if (*s == '\n') {
@@ -64,15 +64,15 @@
 		put(*s);
 	}
 
-#line 79 "iostream.x"
+#line 79 "iostream.md"
 ;
 		return *this;
 	}
 
-#line 62 "iostream.x"
+#line 62 "iostream.md"
 
 
-#line 16 "read.x"
+#line 16 "read.md"
 
 	int get() {
 		static const int rx_data { 0x01 };
@@ -83,7 +83,7 @@
 		return res & 0xff;
 	}
 
-#line 29 "read.x"
+#line 29 "read.md"
 
 	void write_num(int v) {
 		int next = v / 10;
@@ -91,7 +91,7 @@
 		put((v % 10) + '0');
 	}
 
-#line 39 "read.x"
+#line 39 "read.md"
 
 	ostream &operator<<(int v) {
 		if (v < 0) { put('-'); }
@@ -99,11 +99,11 @@
 		return *this;
 	}
 
-#line 54 "iostream.x"
+#line 54 "iostream.md"
 
 	};
 
-#line 163 "iostream.x"
+#line 163 "iostream.md"
 
 	#if iostream_IMPL
 		ostream cout;
@@ -111,6 +111,6 @@
 		extern ostream cout;
 	#endif
 
-#line 17 "iostream.x"
+#line 17 "iostream.md"
 
 	}

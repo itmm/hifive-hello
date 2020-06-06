@@ -1,11 +1,11 @@
 
-#line 22 "index.x"
+#line 22 "index.md"
 
 	#include <iostream>
 
 	int main() {
 		
-#line 51 "read.x"
+#line 51 "read.md"
 
 	std::cout << "Simple Echo\n\n";
 	char buf[2];
@@ -20,6 +20,6 @@
 		}
 	}
 
-#line 26 "index.x"
+#line 26 "index.md"
 ;
 	}

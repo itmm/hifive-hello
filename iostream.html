@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <title>simple `@s(iostream)` implementation</title>
@@ -7,10 +7,10 @@
 <body>
 <h1>simple <code><span class="str">iostream</span></code> implementation</h1>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">1</div><div class="headers">
 <h1>simple <code><span class="str">iostream</span></code> implementation</h1>
-</div>
+</div></div>
 </div>
 </div>
 <p>As we have no standard library support for our small embedded processor, we need to build everything that we need from scratch.
@@ -20,20 +20,20 @@
 </div>
 <h2>File Structure</h2>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">2</div><div class="headers">
 <h2>File Structure</h2>
-</div>
+</div></div>
 <ul><li>
 Which files are needed for the implementation
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">3</div>
 <code>
 <span class="macro">@Def(<span class="name">file: iostream.h</span>)</span><br/>
-<span class="in1"></span><span class="keyword">#pragma</span> <span class="var">once</span><br/>
+<span class="in1"></span><span class="keyword">#pragma</span> <span class="keyword">once</span><br/>
 <br/>
-<span class="in1"></span><span class="var">namespace</span> <span class="type">std</span> {<br/>
+<span class="in1"></span><span class="keyword">namespace</span> <span class="type">std</span> {<br/>
 <span class="in2"></span><span class="macro">@put(<span class="name">declarations</span>)</span><br/>
 <span class="in1"></span>}<br/>
 <span class="macro">@End(<span class="name">file: iostream.h</span>)</span><br/>
@@ -46,7 +46,7 @@ The header file is introduced to make editing easier.
 A lot of editors work not well with the extension-less headers of C++.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">4</div>
 <code>
 <span class="macro">@Def(<span class="name">file: iostream</span>)</span><br/>
 <span class="in1"></span><span class="keyword">#include</span> <span class="str">"iostream.h"</span><br/>
@@ -58,7 +58,7 @@ To comply to the standard, there is also an extension-less header file.
 It simply includes the normal header.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">5</div>
 <code>
 <span class="macro">@Def(<span class="name">file: iostream.cpp</span>)</span><br/>
 <span class="in1"></span><span class="keyword">#define</span> <span class="var">iostream_IMPL</span> <span class="num">1</span><br/>
@@ -74,10 +74,10 @@ It defines a macro that can be used by the header to decide if a symbol  must be
 </div>
 <h2>The <code><span class="type">ostream</span></code> class</h2>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">6</div><div class="headers">
 <h2>The <code><span class="type">ostream</span></code> class</h2>
-</div>
+</div></div>
 <ul><li>
 The <code><span class="type">ostream</span></code> class encapsulates everything that is needed to write a  string to the UART.
 </li><li>
@@ -86,7 +86,7 @@ The constructor ensures that the UART is setup.
 The <code>&lt;&lt;</code> operator sends a string to the UART.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">7</div>
 <code>
 <span class="macro">@def(<span class="name">declarations</span>)</span><br/>
 <span class="in1"></span><span class="keyword">class</span> <span class="type">ostream</span> {<br/>
@@ -100,7 +100,7 @@ The <code>&lt;&lt;</code> operator sends a string to the UART.
 The class has <code><span class="keyword">public</span></code> and <code><span class="keyword">private</span></code> attributes
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">8</div>
 <code>
 <span class="macro">@Def(<span class="name">ostream methods</span>)</span><br/>
 <span class="in1"></span><span class="macro">@put(<span class="name">methods</span>)</span><br/>
@@ -110,7 +110,7 @@ The class has <code><span class="keyword">public</span></code> and <code><span c
 Make methods of <code><span class="type">ostream</span></code> class available globally
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">9</div>
 <code>
 <span class="macro">@def(<span class="name">methods</span>)</span><br/>
 <span class="in1"></span><span class="fn">ostream</span>() {<br/>
@@ -122,7 +122,7 @@ Make methods of <code><span class="type">ostream</span></code> class available g
 A default constructor will setup the UART for writing
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">10</div>
 <code>
 <span class="macro">@add(<span class="name">methods</span>)</span><br/>
 <span class="in1"></span><span class="type">ostream</span> &amp;<span class="var">operator</span>&lt;&lt;(<span class="type">const</span> <span class="type">char</span> *<span class="var">s</span>) {<br/>
@@ -138,10 +138,10 @@ The <code>&lt;&lt;</code>-operator will send a C-style string to the UART
 </div>
 <h2>Communicating with the UART</h2>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">11</div><div class="headers">
 <h2>Communicating with the UART</h2>
-</div>
+</div></div>
 <ul><li>
 Implementing the low-level communication with the UART
 </li></ul>
@@ -151,13 +151,13 @@ Implementing the low-level communication with the UART
 </p>
 <p>I have found this address in the file <code><span class="var">metal</span>.<span class="var">h</span></code> in the <code><span class="var">sifive</span>/<span class="var">freedom</span>-<span class="var">e</span>-<span class="var">sdk</span></code> project on Github in the directory <code><span class="var">bsp</span>/<span class="var">sifive</span>-<span class="var">hifive1</span>-<span class="var">revb</span></code>.
 </p>
-<p>An important part is to treat this pointer as <code><span class="var">volatile</span></code> because its contents is not only modified by our program. The hardware itself can change values by its own. So it is important not to optimize away repeated accesses, but to fetch the values again and again from memory.
+<p>An important part is to treat this pointer as <code><span class="keyword">volatile</span></code> because its contents is not only modified by our program. The hardware itself can change values by its own. So it is important not to optimize away repeated accesses, but to fetch the values again and again from memory.
 </p>
 <div class="slides">
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">12</div>
 <code>
 <span class="macro">@def(<span class="name">privates</span>)</span><br/>
-<span class="in1"></span><span class="keyword">using</span> <span class="var">uart_t</span> = <span class="var">volatile</span> <span class="type">int</span> *;<br/>
+<span class="in1"></span><span class="keyword">using</span> <span class="var">uart_t</span> = <span class="keyword">volatile</span> <span class="type">int</span> *;<br/>
 <span class="in1"></span><span class="var">uart_t</span> <span class="fn">uart</span>() {<br/>
 <span class="in2"></span><span class="keyword">return</span> <span class="var">reinterpret_cast</span>&lt;<span class="var">uart_t</span>&gt;(<br/>
 <span class="in3"></span><span class="num">0x10013000</span><br/>
@@ -166,10 +166,10 @@ Implementing the low-level communication with the UART
 <span class="macro">@end(<span class="name">privates</span>)</span><br/>
 </code></div>
 <ul><li>
-Accessor returns a pointer to the first register as a <code><span class="var">volatile</span></code>  variable
+Accessor returns a pointer to the first register as a <code><span class="keyword">volatile</span></code>  variable
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">13</div>
 <code>
 <span class="macro">@Def(<span class="name">setup uart</span>)</span><br/>
 <span class="in1"></span><span class="keyword">static</span> <span class="type">const</span> <span class="type">int</span> <span class="var">tx_control</span> { <span class="num">0x02</span> };<br/>
@@ -180,7 +180,7 @@ Accessor returns a pointer to the first register as a <code><span class="var">vo
 Bit <code><span class="num">1</span></code> of the <code><span class="var">tx_control</span></code> word must be set on to enable output of  the UART
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">14</div>
 <code>
 <span class="macro">@add(<span class="name">privates</span>)</span><br/>
 <span class="in1"></span><span class="type">void</span> <span class="fn">put</span>(<span class="type">char</span> <span class="var">c</span>) {<br/>
@@ -203,15 +203,15 @@ That is all for writing one character.
 </div>
 <h2>Sending a string</h2>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">15</div><div class="headers">
 <h2>Sending a string</h2>
-</div>
+</div></div>
 <ul><li>
 Writes a string character by character
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">16</div>
 <code>
 <span class="macro">@def(<span class="name">send string</span>)</span><br/>
 <span class="in1"></span><span class="keyword">if</span> (<span class="var">s</span>) <span class="keyword">for</span> (; *<span class="var">s</span>; ++<span class="var">s</span>) {<br/>
@@ -233,15 +233,15 @@ To get the right look function must write an additional carriage  return for eac
 </div>
 <h2>The <code><span class="var">cout</span></code> global</h2>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">17</div><div class="headers">
 <h2>The <code><span class="var">cout</span></code> global</h2>
-</div>
+</div></div>
 <ul><li>
 Global variable for handling output
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">18</div>
 <code>
 <span class="macro">@add(<span class="name">declarations</span>)</span><br/>
 <span class="in1"></span><span class="keyword">#if</span> <span class="var">iostream_IMPL</span><br/>

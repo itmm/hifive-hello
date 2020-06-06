@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <title>Read Characters and Numbers</title>
@@ -7,23 +7,23 @@
 <body>
 <h1>Read Characters and Numbers</h1>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">1</div><div class="headers">
 <h1>Read Characters and Numbers</h1>
-</div>
+</div></div>
 </div>
 </div>
 <h2>Enable UART</h2>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">2</div><div class="headers">
 <h2>Enable UART</h2>
-</div>
+</div></div>
 <ul><li>
 First the UART must be enabled to support reading from it
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">3</div>
 <code>
 <span class="macro">@Add(<span class="name">setup uart</span>)</span><br/>
 <span class="in1"></span><span class="keyword">static</span> <span class="type">const</span> <span class="type">int</span> <span class="var">rx_control</span> { <span class="num">0x03</span> };<br/>
@@ -34,12 +34,12 @@ First the UART must be enabled to support reading from it
 </div>
 <h2>Reading a character</h2>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">4</div><div class="headers">
 <h2>Reading a character</h2>
+</div></div>
 </div>
-</div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">5</div>
 <code>
 <span class="macro">@Add(<span class="name">ostream methods</span>)</span><br/>
 <span class="in1"></span><span class="type">int</span> <span class="fn">get</span>() {<br/>
@@ -53,7 +53,7 @@ First the UART must be enabled to support reading from it
 <span class="macro">@End(<span class="name">ostream methods</span>)</span><br/>
 </code></div>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">6</div>
 <code>
 <span class="macro">@Add(<span class="name">ostream methods</span>)</span><br/>
 <span class="in1"></span><span class="type">void</span> <span class="fn">write_num</span>(<span class="type">int</span> <span class="var">v</span>) {<br/>
@@ -64,7 +64,7 @@ First the UART must be enabled to support reading from it
 <span class="macro">@End(<span class="name">ostream methods</span>)</span><br/>
 </code></div>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">7</div>
 <code>
 <span class="macro">@Add(<span class="name">ostream methods</span>)</span><br/>
 <span class="in1"></span><span class="type">ostream</span> &amp;<span class="var">operator</span>&lt;&lt;(<span class="type">int</span> <span class="var">v</span>) {<br/>
@@ -78,12 +78,12 @@ First the UART must be enabled to support reading from it
 </div>
 <h2>Simple echo</h2>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">8</div><div class="headers">
 <h2>Simple echo</h2>
+</div></div>
 </div>
-</div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">9</div>
 <code>
 <span class="macro">@Rep(<span class="name">main</span>)</span><br/>
 <span class="in1"></span><span class="type">std</span>::<span class="var">cout</span> &lt;&lt; <span class="str">"Simple Echo\n\n"</span>;<br/>

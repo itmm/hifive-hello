@@ -1,8 +1,8 @@
 
-#line 251 "setup.x"
+#line 252 "setup.md"
 
 	
-#line 258 "setup.x"
+#line 259 "setup.md"
 
 	extern "C"
 		void (**_init_array_begin)()
@@ -11,7 +11,7 @@
 		void (**_init_array_end)()
 			__attribute__((weak));
 
-#line 272 "setup.x"
+#line 273 "setup.md"
 
 	extern "C" void setup() {
 		auto cur = _init_array_begin;
@@ -20,5 +20,5 @@
 		}
 	}
 
-#line 252 "setup.x"
+#line 253 "setup.md"
 

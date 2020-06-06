@@ -4,7 +4,7 @@
 
 all: hello.hex
 
-HXs := $(wildcard *.x)
+HXs := $(shell hx-srcs.sh)
 
 SRCs := $(shell hx-files.sh $(HXs))
 
@@ -16,20 +16,18 @@ hx-run: $(HXs)
 
 $(SRCs): hx-run
 
-TARGET := riscv32-unknown-elf
+CC := clang-9
+CXX := clang++-9
+LD := ld.lld-9 -T memory.lds
 
-CC := $(TARGET)-gcc
-CXX := $(TARGET)-g++
-LD := $(TARGET)-ld -T memory.lds
-
-CXXFLAGS += -MD -Wall -O2 -I.
-CFLAGS += -MD -Wall -O2
+CXXFLAGS += -fno-exceptions --target=riscv32 -march=rv32imac -MD -Wall -O2 -I.
+ASFLAGS += --target=riscv32 -march=rv32imac -MD -Wall -O2
 
 hello: $(OBJs)
 	$(LD) $^ -o $@
 
 hello.hex: hello
-	$(TARGET)-objcopy $^ -O ihex $@
+	objcopy $^ -O ihex $@
 
 iostream: iostream.h
 	@echo >/dev/null

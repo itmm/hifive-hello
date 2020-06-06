@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <title>Putting the executable on the HiFive1</title>
@@ -7,15 +7,15 @@
 <body>
 <h1>Putting the executable on the HiFive1</h1>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">1</div><div class="headers">
 <h1>Putting the executable on the HiFive1</h1>
-</div>
+</div></div>
 <ul><li>
 This section describes the Makefile that is used to build the image.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">2</div>
 <code>
 <span class="macro">@Def(<span class="name">file: Makefile</span>)</span><br/>
 <span class="in1"></span><span class="macro">@put(<span class="name">entries</span>)</span><br/>
@@ -25,7 +25,7 @@ This section describes the Makefile that is used to build the image.
 Entries in the <code><span class="type">Makefile</span></code>.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">3</div>
 <code>
 <span class="macro">@def(<span class="name">entries</span>)</span><br/>
 .<span class="var">PHONY</span>: <span class="var">all</span> <span class="var">clean</span><br/>
@@ -39,7 +39,7 @@ The <code><span class="var">all</span></code> target builds everything.
 The <code><span class="var">clean</span></code> target removes all temporary files.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">4</div>
 <code>
 <span class="macro">@add(<span class="name">entries</span>)</span><br/>
 <span class="var">all</span>: <span class="var">hello</span>.<span class="var">hex</span><br/>
@@ -52,25 +52,25 @@ The main target is an Intel Hex file of the image that can be copied on  the dev
 </div>
 <h2><code><span class="var">hx</span></code> part</h2>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">5</div><div class="headers">
 <h2><code><span class="var">hx</span></code> part</h2>
-</div>
+</div></div>
 <ul><li>
 Generates source files from the <code><span class="var">hx</span></code> sources
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">6</div>
 <code>
 <span class="macro">@add(<span class="name">entries</span>)</span><br/>
-<span class="var">HXs</span> := <span class="fn">$</span>(<span class="var">wildcard</span> *.<span class="var">x</span>)<br/>
+<span class="var">HXs</span> := <span class="fn">$</span>(<span class="var">shell</span> <span class="var">hx</span>-<span class="var">srcs</span>.<span class="var">sh</span>)<br/>
 <span class="macro">@end(<span class="name">entries</span>)</span><br/>
 </code></div>
 <ul><li>
 The <code><span class="var">hx</span></code> sources are all files ending in <code>.<span class="var">x</span></code>.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">7</div>
 <code>
 <span class="macro">@add(<span class="name">entries</span>)</span><br/>
 <span class="var">SRCs</span> := <span class="fn">$</span>(<span class="var">shell</span> <span class="var">hx</span>-<span class="var">files</span>.<span class="var">sh</span> <span class="fn">$</span>(<span class="var">HXs</span>))<br/>
@@ -82,7 +82,7 @@ The sources are all files that are generated from the <code><span class="var">hx
 <code><span class="var">hx</span></code> provides a script to get these filenames.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">8</div>
 <code>
 <span class="macro">@add(<span class="name">entries</span>)</span><br/>
 <span class="var">OBJs</span> := <span class="fn">$</span>(<span class="var">filter</span> %.<span class="var">o</span>, <span class="fn">$</span>(<span class="var">SRCs</span>:.<span class="var">S</span>=.<span class="var">o</span>) <span class="fn">$</span>(<span class="var">SRCs</span>:.<span class="var">cpp</span>=.<span class="var">o</span>))<br/>
@@ -92,7 +92,7 @@ The sources are all files that are generated from the <code><span class="var">hx
 Object files are only generated from assembler and C++ sources.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">9</div>
 <code>
 <span class="macro">@add(<span class="name">entries</span>)</span><br/>
 <span class="var">hx</span>-<span class="var">run</span>: <span class="fn">$</span>(<span class="var">HXs</span>)<br/>
@@ -106,7 +106,7 @@ A special dummy file is used to check if <code><span class="var">hx</span></code
 As <code><span class="var">hx</span></code> is not touching files that are not changed it will be otherwise  invoked too often.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">10</div>
 <code>
 <span class="macro">@add(<span class="name">entries</span>)</span><br/>
 <span class="fn">$</span>(<span class="var">SRCs</span>): <span class="var">hx</span>-<span class="var">run</span><br/>
@@ -119,27 +119,17 @@ The generated files can be treated as up to date, if the dummy file is  newer th
 </div>
 <h2>Building for RISC-V</h2>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">11</div><div class="headers">
 <h2>Building for RISC-V</h2>
+</div></div>
 </div>
-</div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">12</div>
 <code>
 <span class="macro">@add(<span class="name">entries</span>)</span><br/>
-<span class="var">TARGET</span> := <span class="var">riscv32</span>-<span class="var">unknown</span>-<span class="var">elf</span><br/>
-<span class="macro">@end(<span class="name">entries</span>)</span><br/>
-</code></div>
-<ul><li>
-The target is a prefix of all programs in the toolchain.
-</li></ul>
-</div>
-<div><div>
-<code>
-<span class="macro">@add(<span class="name">entries</span>)</span><br/>
-<span class="var">CC</span> := <span class="fn">$</span>(<span class="var">TARGET</span>)-<span class="var">gcc</span><br/>
-<span class="var">CXX</span> := <span class="fn">$</span>(<span class="var">TARGET</span>)-<span class="var">g</span>++<br/>
-<span class="var">LD</span> := <span class="fn">$</span>(<span class="var">TARGET</span>)-<span class="var">ld</span> -<span class="var">T</span> <span class="var">memory</span>.<span class="var">lds</span><br/>
+<span class="var">CC</span> := <span class="var">clang</span>-<span class="num">9</span><br/>
+<span class="var">CXX</span> := <span class="var">clang</span>++-<span class="num">9</span><br/>
+<span class="var">LD</span> := <span class="var">ld</span>.<span class="var">lld</span>-<span class="num">9</span> -<span class="var">T</span> <span class="var">memory</span>.<span class="var">lds</span><br/>
 <span class="macro">@end(<span class="name">entries</span>)</span><br/>
 </code></div>
 <ul><li>
@@ -148,11 +138,11 @@ The compilers and linker are changed to build for RISC-V.
 The C compiler is used to assemble the assembly files.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">13</div>
 <code>
 <span class="macro">@add(<span class="name">entries</span>)</span><br/>
-<span class="var">CXXFLAGS</span> += -<span class="var">MD</span> -<span class="type">Wall</span> -<span class="var">O2</span> -<span class="var">I</span>.<br/>
-<span class="var">CFLAGS</span> += -<span class="var">MD</span> -<span class="type">Wall</span> -<span class="var">O2</span><br/>
+<span class="var">CXXFLAGS</span> += -<span class="var">fno</span>-<span class="var">exceptions</span> --<span class="var">target</span>=<span class="var">riscv32</span> -<span class="var">march</span>=<span class="var">rv32imac</span> -<span class="var">MD</span> -<span class="type">Wall</span> -<span class="var">O2</span> -<span class="var">I</span>.<br/>
+<span class="var">ASFLAGS</span> += --<span class="var">target</span>=<span class="var">riscv32</span> -<span class="var">march</span>=<span class="var">rv32imac</span> -<span class="var">MD</span> -<span class="type">Wall</span> -<span class="var">O2</span><br/>
 <span class="macro">@end(<span class="name">entries</span>)</span><br/>
 </code></div>
 <ul><li>
@@ -167,7 +157,7 @@ The C++ compiler will include files from the local directory before  using syste
 This is needed, because the C++ library is not build for the HiFive1.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">14</div>
 <code>
 <span class="macro">@add(<span class="name">entries</span>)</span><br/>
 <span class="var">hello</span>: <span class="fn">$</span>(<span class="var">OBJs</span>)<br/>
@@ -178,18 +168,18 @@ This is needed, because the C++ library is not build for the HiFive1.
 Link executable
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">15</div>
 <code>
 <span class="macro">@add(<span class="name">entries</span>)</span><br/>
 <span class="var">hello</span>.<span class="var">hex</span>: <span class="var">hello</span><br/>
-<span class="in1"></span><span class="fn">$</span>(<span class="var">TARGET</span>)-<span class="var">objcopy</span> <span class="var">$</span>^ -<span class="var">O</span> <span class="var">ihex</span> <span class="var">$</span>@<br/>
+<span class="in1"></span><span class="var">objcopy</span> <span class="var">$</span>^ -<span class="var">O</span> <span class="var">ihex</span> <span class="var">$</span>@<br/>
 <span class="macro">@end(<span class="name">entries</span>)</span><br/>
 </code></div>
 <ul><li>
 Generate Intel Hex file.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">16</div>
 <code>
 <span class="macro">@add(<span class="name">entries</span>)</span><br/>
 <span class="var">iostream</span>: <span class="var">iostream</span>.<span class="var">h</span><br/>
@@ -205,15 +195,15 @@ An empty rule is provided, so that the default linking rule will not be  used.
 </div>
 <h2>Dependency management</h2>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">17</div><div class="headers">
 <h2>Dependency management</h2>
-</div>
+</div></div>
 <ul><li>
 Include dependency files
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">18</div>
 <code>
 <span class="macro">@add(<span class="name">entries</span>)</span><br/>
 <span class="var">DEPs</span> := <span class="fn">$</span>(<span class="var">wildcard</span> *.<span class="var">d</span>)<br/>
@@ -229,15 +219,15 @@ If there are dependency files, they will be included.
 </div>
 <h2>Clean</h2>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">19</div><div class="headers">
 <h2>Clean</h2>
-</div>
+</div></div>
 <ul><li>
 Remove temporary files
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">20</div>
 <code>
 <span class="macro">@add(<span class="name">entries</span>)</span><br/>
 <span class="var">clean</span>:<br/>

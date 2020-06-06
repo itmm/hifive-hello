@@ -30,7 +30,7 @@ all: hello.hex
 
 ```
 @add(entries)
-HXs := $(wildcard *.x)
+HXs := $(shell hx-srcs.sh)
 @end(entries)
 ```
 * The `hx` sources are all files ending in `.x`.
@@ -71,18 +71,12 @@ $(SRCs): hx-run
 
 ## Building for RISC-V
 
-```
-@add(entries)
-TARGET := riscv32-unknown-elf
-@end(entries)
-```
-* The target is a prefix of all programs in the toolchain.
 
 ```
 @add(entries)
-CC := $(TARGET)-gcc
-CXX := $(TARGET)-g++
-LD := $(TARGET)-ld -T memory.lds
+CC := clang-9
+CXX := clang++-9
+LD := ld.lld-9 -T memory.lds
 @end(entries)
 ```
 * The compilers and linker are changed to build for RISC-V.
@@ -90,8 +84,8 @@ LD := $(TARGET)-ld -T memory.lds
 
 ```
 @add(entries)
-CXXFLAGS += -MD -Wall -O2 -I.
-CFLAGS += -MD -Wall -O2
+CXXFLAGS += -fno-exceptions --target=riscv32 -march=rv32imac -MD -Wall -O2 -I.
+ASFLAGS += --target=riscv32 -march=rv32imac -MD -Wall -O2
 @end(entries)
 ```
 * The compilers are optimizing for size.
@@ -112,7 +106,7 @@ hello: $(OBJs)
 ```
 @add(entries)
 hello.hex: hello
-	$(TARGET)-objcopy $^ -O ihex $@
+	objcopy $^ -O ihex $@
 @end(entries)
 ```
 * Generate Intel Hex file.

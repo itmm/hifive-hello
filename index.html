@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <title>Building my first program for HiFive1 Rev. B</title>
@@ -7,10 +7,10 @@
 <body>
 <h1>Building my first program for HiFive1 Rev. B</h1>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">1</div><div class="headers">
 <h1>Building my first program for HiFive1 Rev. B</h1>
-</div>
+</div></div>
 </div>
 </div>
 <p>This is the documentation for my first bare metal project for the HiFive1 board. The repository is hosted at https://github.com/itmm/hifive-hello.
@@ -22,7 +22,7 @@
 <p>The goal is to make the following C++ program run on the HiFive1 and print the message over the UART.
 </p>
 <div class="slides">
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">2</div>
 <code>
 <span class="macro">@Def(<span class="name">file: hello.cpp</span>)</span><br/>
 <span class="in1"></span><span class="keyword">#include</span> &lt;<span class="var">iostream</span>&gt;<br/>
@@ -36,7 +36,7 @@
 Print a simple message and terminate.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">3</div>
 <code>
 <span class="macro">@def(<span class="name">main</span>)</span><br/>
 <span class="in1"></span><span class="type">std</span>::<span class="var">cout</span> &lt;&lt; <span class="str">"Hello World!\n"</span>;<br/>
@@ -52,7 +52,7 @@ So it can easily be replaced later.
 <p>You can build the program on the Raspberry Pi with the command
 </p>
 <div class="slides">
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">4</div>
 <code>
 <span class="var">$</span> <span class="keyword">g++</span> <span class="keyword">-Wall</span> <span class="str">hello.cpp</span> <span class="keyword">-o</span> <span class="str">hello</span><br/>
 </code></div>
@@ -64,7 +64,7 @@ Build the program locally.
 <p>If the commando is not working maybe you need to install the C++ compiler with
 </p>
 <div class="slides">
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">5</div>
 <code>
 <span class="var">$</span> <span class="keyword">sudo</span> <span class="keyword">apt</span> <span class="keyword">intall</span> <span class="str">g++</span><br/>
 </code></div>
@@ -82,33 +82,33 @@ Install the GCC C++ compiler for Rasperry Pi.
 <p>So here are the next steps:
 </p>
 <div class="slides">
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">6</div>
 <code>
-<span class="macro">@inc(<span class="name"><a href="toolset.html">toolset.x</a></span>)</span><br/>
+<span class="macro">@inc(<span class="name"><a href="toolset.html">toolset.md</a></span>)</span><br/>
 </code></div>
 <ul><li>
-Build the GCC C++ Compiler for HiFive1.
+install LLVM C++ Compiler for HiFive1
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">7</div>
 <code>
-<span class="macro">@inc(<span class="name"><a href="iostream.html">iostream.x</a></span>)</span><br/>
+<span class="macro">@inc(<span class="name"><a href="iostream.html">iostream.md</a></span>)</span><br/>
 </code></div>
 <ul><li>
 Write a minimal implementation of <code><span class="type">std</span>::<span class="var">cout</span></code> that writes a C-style  string to the UART.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">8</div>
 <code>
-<span class="macro">@inc(<span class="name"><a href="setup.html">setup.x</a></span>)</span><br/>
+<span class="macro">@inc(<span class="name"><a href="setup.html">setup.md</a></span>)</span><br/>
 </code></div>
 <ul><li>
 Write Startup-Code (in RISC-V assembly and C++) to make the processor  ready for calling <code><span class="var">main</span></code>.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">9</div>
 <code>
-<span class="macro">@inc(<span class="name"><a href="deploy.html">deploy.x</a></span>)</span><br/>
+<span class="macro">@inc(<span class="name"><a href="deploy.html">deploy.md</a></span>)</span><br/>
 </code></div>
 <ul><li>
 Put the resulting program on the HiFive1 and watch the result.
@@ -120,9 +120,9 @@ Put the resulting program on the HiFive1 and watch the result.
 <p>Hopefully we can use it in the future not only on boards for embedded devices but as a replacement for the ARM in Raspberry Pis or similar boards. I love to invest my programming time on open technology and not depend on companies that can crash whole companies on the tweets of totalitarian presidents.
 </p>
 <div class="slides">
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">10</div>
 <code>
-<span class="macro">@inc(<span class="name"><a href="read.html">read.x</a></span>)</span><br/>
+<span class="macro">@inc(<span class="name"><a href="read.html">read.md</a></span>)</span><br/>
 </code></div>
 <ul><li>
 Augment the sample program to read characters and numbers.
@@ -131,10 +131,10 @@ Augment the sample program to read characters and numbers.
 </div>
 <h2>About this document</h2>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">11</div><div class="headers">
 <h2>About this document</h2>
-</div>
+</div></div>
 </div>
 </div>
 <p>This document was created with <code><span class="var">hx</span></code> (see https://github.com/itmm/hex). It consists of <code>.<span class="var">x</span></code>-files that can be converted into a HTML presentation. Also it contains code fragments that are part of the presentation.

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <title>Initialize the Processor</title>
@@ -7,10 +7,10 @@
 <body>
 <h1>Initialize the Processor</h1>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">1</div><div class="headers">
 <h1>Initialize the Processor</h1>
-</div>
+</div></div>
 <ul><li>
 This section documents the steps that are needed to start executing the  main program
 </li></ul>
@@ -18,10 +18,10 @@ This section documents the steps that are needed to start executing the  main pr
 </div>
 <h2>Preparing the linker</h2>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">2</div><div class="headers">
 <h2>Preparing the linker</h2>
-</div>
+</div></div>
 </div>
 </div>
 <p>The compiled executables must be put into the right places in the flash memory of the HiFive1. The RAM can be accessed, but no persistent data can be stored there.
@@ -31,7 +31,7 @@ This section documents the steps that are needed to start executing the  main pr
 <p>I also got the inspiration for this file from the Github project <code><span class="var">sifive</span>/<span class="var">freedom</span>-<span class="var">e</span>-<span class="var">sdk</span></code>. In the folder <code><span class="var">bsp</span>/<span class="var">sifive</span>-<span class="var">hifive1</span>-<span class="var">revb</span></code> there is the file <code><span class="var">metal</span>.<span class="var">ramrodata</span>.<span class="var">lds</span></code> that contains most of the information in this file. But I stripped away all definitions that I do not need (yet).
 </p>
 <div class="slides">
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">3</div>
 <code>
 <span class="macro">@Def(<span class="name">file: memory.lds</span>)</span><br/>
 <span class="in1"></span><span class="macro">@put(<span class="name">lds</span>)</span><br/>
@@ -41,7 +41,7 @@ This section documents the steps that are needed to start executing the  main pr
 The linker definition script contains multiple sections.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">4</div>
 <code>
 <span class="macro">@def(<span class="name">lds</span>)</span><br/>
 <span class="in1"></span><span class="fn">OUTPUT_ARCH</span>(<span class="str">"riscv"</span>)<br/>
@@ -51,7 +51,7 @@ The linker definition script contains multiple sections.
 The architecture of the build image is RISC-V
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">5</div>
 <code>
 <span class="macro">@add(<span class="name">lds</span>)</span><br/>
 <span class="in1"></span><span class="fn">ENTRY</span>(<span class="var">_enter</span>)<br/>
@@ -63,12 +63,12 @@ The execution will start at the label <code><span class="var">_enter</span></cod
 As the processor is not fully initialized at this step, the <code><span class="var">_enter</span></code>  code must be written in assembly language and initialize at least the  stack and global pointer
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">6</div>
 <code>
 <span class="macro">@add(<span class="name">lds</span>)</span><br/>
 <span class="in1"></span><span class="var">MEMORY</span> {<br/>
-<span class="in2"></span><span class="var">ram</span> (<span class="var">wxa</span>!<span class="var">ri</span>) : <span class="var">ORIGIN</span> = <span class="num">0x80000000</span>, <span class="var">LENGTH</span> = <span class="num">0x4000</span><br/>
-<span class="in2"></span><span class="var">flash</span> (<span class="var">rxai</span>!<span class="var">w</span>) : <span class="var">ORIGIN</span> = <span class="num">0x20010000</span>, <span class="var">LENGTH</span> = <span class="num">0x6a120</span><br/>
+<span class="in2"></span><span class="var">ram</span> : <span class="var">ORIGIN</span> = <span class="num">0x80000000</span>, <span class="var">LENGTH</span> = <span class="num">0x4000</span><br/>
+<span class="in2"></span><span class="var">flash</span> : <span class="var">ORIGIN</span> = <span class="num">0x20010000</span>, <span class="var">LENGTH</span> = <span class="num">0x6a120</span><br/>
 <span class="in1"></span>}<br/>
 <span class="macro">@end(<span class="name">lds</span>)</span><br/>
 </code></div>
@@ -80,7 +80,7 @@ The flash starts at <code><span class="num">0x20010000</span></code> and that is
 Also the RAM is present.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">7</div>
 <code>
 <span class="macro">@add(<span class="name">lds</span>)</span><br/>
 <span class="in1"></span><span class="var">PHDRS</span> {<br/>
@@ -95,7 +95,7 @@ I am not sure, what these entries do.
 TODO: read some docs.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">8</div>
 <code>
 <span class="macro">@add(<span class="name">lds</span>)</span><br/>
 <span class="in1"></span><span class="var">SECTIONS</span> {<br/>
@@ -109,7 +109,7 @@ The main part of the lds file describes the sections that will be put  in the EL
 Each section has an origin, a size and may contain data (both  executable code or static data).
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">9</div>
 <code>
 <span class="macro">@def(<span class="name">sections</span>)</span><br/>
 <span class="in1"></span>.<span class="var">init</span> : {<br/>
@@ -123,7 +123,7 @@ The first section (starting at the flash start) contains the setup  code.
 This is only a small assembly program the sets up the hardware and  calls a C++ function for doing the main initialization.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">10</div>
 <code>
 <span class="macro">@add(<span class="name">sections</span>)</span><br/>
 <span class="in1"></span>.<span class="var">init_array</span> : {<br/>
@@ -143,12 +143,12 @@ It contains the constructors of global variables that need to be  invoked.
 Even our smallest program contains one of these constructors:  <code><span class="type">std</span>::<span class="var">cout</span></code> initializes the UART.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">11</div>
 <code>
 <span class="macro">@add(<span class="name">sections</span>)</span><br/>
 <span class="in1"></span>. = <span class="fn">ALIGN</span>(<span class="num">8</span>);<br/>
 <span class="in1"></span>.<span class="var">text</span> : {<br/>
-<span class="in2"></span>*(.<span class="var">text</span> .<span class="var">text</span>*)<br/>
+<span class="in2"></span>*(.<span class="var">text</span> .<span class="var">text</span>*);<br/>
 <span class="in1"></span>} &gt;<span class="var">flash</span> <span class="var">AT</span>&gt;<span class="var">flash</span> :<span class="var">flash</span><br/>
 <span class="macro">@end(<span class="name">sections</span>)</span><br/>
 </code></div>
@@ -160,12 +160,12 @@ I am not sure, if the alignment is necessary.
 TODO: check alignment
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">12</div>
 <code>
 <span class="macro">@add(<span class="name">sections</span>)</span><br/>
 <span class="in1"></span>.<span class="var">rodata</span> : {<br/>
-<span class="in2"></span>*(.<span class="var">rodata</span>)<br/>
-<span class="in2"></span>*(.<span class="var">sdata</span>)<br/>
+<span class="in2"></span>*(.<span class="var">rodata</span>);<br/>
+<span class="in2"></span>*(.<span class="var">sdata</span>);<br/>
 <span class="in1"></span>} &gt;<span class="var">flash</span> <span class="var">AT</span>&gt;<span class="var">flash</span> :<span class="var">flash</span><br/>
 <span class="macro">@end(<span class="name">sections</span>)</span><br/>
 </code></div>
@@ -181,13 +181,14 @@ But I prefer to have more RAM available.
 It is no problem to byte-address the data in the flash.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">13</div>
 <code>
 <span class="macro">@add(<span class="name">sections</span>)</span><br/>
 <span class="in1"></span>.<span class="var">bss</span> : {<br/>
-<span class="in2"></span>*(.<span class="var">data</span>)<br/>
+<span class="in2"></span>*(.<span class="var">data</span>);<br/>
 <span class="in2"></span><span class="fn">PROVIDE</span>(<span class="var">__global_pointer$</span> = . + <span class="num">0x800</span>);<br/>
-<span class="in2"></span>*(.<span class="var">bss</span>)<br/>
+<span class="in2"></span>*(.<span class="var">bss</span>);<br/>
+<span class="in2"></span>*(.<span class="var">sbss</span>);<br/>
 <span class="in1"></span>} &gt;<span class="var">ram</span> <span class="var">AT</span>&gt;<span class="var">ram</span> :<span class="var">ram</span><br/>
 <span class="macro">@end(<span class="name">sections</span>)</span><br/>
 </code></div>
@@ -199,7 +200,7 @@ All you can do is put some read-only data in the flash and copy it  to the RAM.
 This will not be done automatically.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">14</div>
 <code>
 <span class="macro">@add(<span class="name">sections</span>)</span><br/>
 <span class="in1"></span>.<span class="var">stack</span> : {<br/>
@@ -217,17 +218,17 @@ The startup code will set the stack accordingly.
 </div>
 <h2>Assembly startup</h2>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">15</div><div class="headers">
 <h2>Assembly startup</h2>
-</div>
+</div></div>
 <ul><li>
 The startup code uses the information from the linker description file  to initialize the machine accordingly.
 </li><li>
 A special C++ function performs the high-level setup.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">16</div>
 <code>
 <span class="macro">@Def(<span class="name">file: init.S</span>)</span><br/>
 <span class="in1"></span><span class="macro">@put(<span class="name">init</span>)</span><br/>
@@ -237,7 +238,7 @@ A special C++ function performs the high-level setup.
 An assembly file contains the startup code
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">17</div>
 <code>
 <span class="macro">@def(<span class="name">init</span>)</span><br/>
 <span class="in1"></span>.<span class="var">section</span> .<span class="var">init</span><br/>
@@ -250,7 +251,7 @@ An assembly file contains the startup code
 The <code><span class="var">_enter</span></code> function is the first entry point of the <code>.<span class="var">init</span></code> section.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">18</div>
 <code>
 <span class="macro">@def(<span class="name">enter</span>)</span><br/>
 <span class="in1"></span>.<span class="var">option</span> <span class="var">push</span><br/>
@@ -267,7 +268,7 @@ Data can be fetched relative to this pointer.
 No relaxation must be performed to set this pointer.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">19</div>
 <code>
 <span class="macro">@add(<span class="name">enter</span>)</span><br/>
     <span class="var">la</span> <span class="var">t0</span>, <span class="var">early_trap_vector</span><br/>
@@ -278,7 +279,7 @@ No relaxation must be performed to set this pointer.
 Installs a dummy trap vector.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">20</div>
 <code>
 <span class="macro">@add(<span class="name">init</span>)</span><br/>
 <span class="in1"></span>.<span class="var">align</span> <span class="num">2</span><br/>
@@ -290,7 +291,7 @@ Installs a dummy trap vector.
 The dummy implementation stops the processor with a busy loop.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">21</div>
 <code>
 <span class="macro">@add(<span class="name">enter</span>)</span><br/>
 <span class="in1"></span><span class="var">la</span> <span class="var">sp</span>, <span class="var">_sp</span><br/>
@@ -303,7 +304,7 @@ Sets the stack pointer.
 Make sure that it is on a 16-byte boundary.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">22</div>
 <code>
 <span class="macro">@add(<span class="name">enter</span>)</span><br/>
 <span class="in2"></span><span class="var">csrr</span> <span class="var">a0</span>, <span class="var">mhartid</span><br/>
@@ -315,7 +316,7 @@ Make sure that it is on a 16-byte boundary.
 Only continue on core #0.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">23</div>
 <code>
 <span class="macro">@add(<span class="name">enter</span>)</span><br/>
 <span class="in1"></span><span class="var">call</span> <span class="var">setup</span><br/>
@@ -326,7 +327,7 @@ Only continue on core #0.
 Call C++ code.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">24</div>
 <code>
 <span class="macro">@add(<span class="name">enter</span>)</span><br/>
 <span class="in1"></span><span class="num">1</span>:<br/>
@@ -340,15 +341,15 @@ Busy-Wait after program is finished
 </div>
 <h2>C++ setup</h2>
 <div class="slides">
-<div>
-<div>
+<div class="page">
+<div class="slide"><div class="slide-nr">25</div><div class="headers">
 <h2>C++ setup</h2>
-</div>
+</div></div>
 <ul><li>
 Calls all needed constructors
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">26</div>
 <code>
 <span class="macro">@Def(<span class="name">file: setup.cpp</span>)</span><br/>
 <span class="in1"></span><span class="macro">@put(<span class="name">setup</span>)</span><br/>
@@ -358,7 +359,7 @@ Calls all needed constructors
 Contains setup code.
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">27</div>
 <code>
 <span class="macro">@def(<span class="name">setup</span>)</span><br/>
 <span class="in1"></span><span class="type">extern</span> <span class="str">"C"</span><br/>
@@ -375,7 +376,7 @@ Begin and end of the array with setup functions.
 In very simple programs these labels may not exist (so <code><span class="num">nullptr</span></code> will  be used instead).
 </li></ul>
 </div>
-<div><div>
+<div class="page"><div class="slide"><div class="slide-nr">28</div>
 <code>
 <span class="macro">@add(<span class="name">setup</span>)</span><br/>
 <span class="in1"></span><span class="type">extern</span> <span class="str">"C"</span> <span class="type">void</span> <span class="fn">setup</span>() {<br/>

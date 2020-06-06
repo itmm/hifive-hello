@@ -71,24 +71,24 @@ information to build my example program.
 So here are the next steps:
 
 ```
-@inc(toolset.x)
+@inc(toolset.md)
 ```
-* Build the GCC C++ Compiler for HiFive1.
+* install LLVM C++ Compiler for HiFive1
 
 ```
-@inc(iostream.x)
+@inc(iostream.md)
 ```
 * Write a minimal implementation of `std::cout` that writes a C-style
   string to the UART.
 
 ```
-@inc(setup.x)
+@inc(setup.md)
 ```
 * Write Startup-Code (in RISC-V assembly and C++) to make the processor
   ready for calling `main`.
 
 ```
-@inc(deploy.x)
+@inc(deploy.md)
 ```
 * Put the resulting program on the HiFive1 and watch the result.
 
@@ -105,7 +105,7 @@ companies that can crash whole companies on the tweets of totalitarian
 presidents.
 
 ```
-@inc(read.x)
+@inc(read.md)
 ```
 * Augment the sample program to read characters and numbers.
 

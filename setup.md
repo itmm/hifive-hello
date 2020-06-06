@@ -45,8 +45,8 @@ But I stripped away all definitions that I do not need (yet).
 ```
 @add(lds)
 	MEMORY {
-		ram (wxa!ri) : ORIGIN = 0x80000000, LENGTH = 0x4000
-		flash (rxai!w) : ORIGIN = 0x20010000, LENGTH = 0x6a120
+		ram : ORIGIN = 0x80000000, LENGTH = 0x4000
+		flash : ORIGIN = 0x20010000, LENGTH = 0x6a120
 	}
 @end(lds)
 ```
@@ -111,7 +111,7 @@ But I stripped away all definitions that I do not need (yet).
 @add(sections)
 	. = ALIGN(8);
 	.text : {
-		*(.text .text*)
+		*(.text .text*);
 	} >flash AT>flash :flash
 @end(sections)
 ```
@@ -122,8 +122,8 @@ But I stripped away all definitions that I do not need (yet).
 ```
 @add(sections)
 	.rodata : {
-		*(.rodata)
-		*(.sdata)
+		*(.rodata);
+		*(.sdata);
 	} >flash AT>flash :flash
 @end(sections)
 ```
@@ -136,9 +136,10 @@ But I stripped away all definitions that I do not need (yet).
 ```
 @add(sections)
 	.bss : {
-		*(.data)
+		*(.data);
 		PROVIDE(__global_pointer$ = . + 0x800);
-		*(.bss)
+		*(.bss);
+		*(.sbss);
 	} >ram AT>ram :ram
 @end(sections)
 ```
